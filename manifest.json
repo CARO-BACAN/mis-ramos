@@ -1,0 +1,21 @@
+{
+  "name": "Mis Ramos",
+  "short_name": "Mis Ramos",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "description": "Calculadora de notas para estudiantes chilenos.",
+  "icons": [
+    {
+      "src": "IMG/calculadora-notas-promedio.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "IMG/icono.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

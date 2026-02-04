@@ -1,0 +1,2046 @@
+:root {
+    /* Default: Azul */
+    --primary-50: 239 246 255; --primary-100: 219 234 254; --primary-200: 191 219 254;
+    --primary-500: 59 130 246; --primary-600: 37 99 235; --primary-700: 29 78 216;
+}
+body { 
+    /* 1. Fuente robusta (Evita saltos de carga CLS) */
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    
+    /* 2. Suavidad para cambiar de tema */
+    transition: background-color 0.3s, color 0.3s;
+    
+    /* 3. Mejora para móviles (quita el parpadeo azul al tocar) */
+    -webkit-tap-highlight-color: transparent;
+
+    /* 4. Estabilidad visual (evita que el footer salte) */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Temas Standard */
+[data-theme="pink"] { --primary-50: 253 242 248; --primary-100: 252 231 243; --primary-200: 251 207 232; --primary-500: 236 72 153; --primary-600: 219 39 119; --primary-700: 190 24 93; }
+[data-theme="orange"] { --primary-50: 255 247 237; --primary-100: 255 237 213; --primary-200: 254 215 170; --primary-500: 249 115 22; --primary-600: 234 88 12; --primary-700: 194 65 12; }
+[data-theme="purple"] { --primary-50: 250 245 255; --primary-100: 243 232 255; --primary-200: 233 213 255; --primary-500: 168 85 247; --primary-600: 147 51 234; --primary-700: 126 34 206; }
+[data-theme="green"] { --primary-50: 240 253 244; --primary-100: 220 252 231; --primary-200: 187 247 208; --primary-500: 34 197 94; --primary-600: 22 163 74; --primary-700: 21 128 61; }
+[data-theme="red"] { --primary-50: 254 242 242; --primary-100: 254 226 226; --primary-200: 254 202 202; --primary-500: 239 68 68; --primary-600: 220 38 38; --primary-700: 185 28 28; }
+[data-theme="teal"] { --primary-50: 240 253 250; --primary-100: 204 251 241; --primary-200: 153 246 228; --primary-500: 20 184 166; --primary-600: 13 148 136; --primary-700: 15 118 110; }
+[data-theme="yellow"] { --primary-50: 254 252 232; --primary-100: 254 249 195; --primary-200: 254 240 138; --primary-500: 234 179 8; --primary-600: 202 138 4; --primary-700: 161 98 7; }
+[data-theme="indigo"] { --primary-50: 238 242 255; --primary-100: 224 231 255; --primary-200: 199 210 254; --primary-500: 99 102 241; --primary-600: 79 70 229; --primary-700: 67 56 202; }
+
+
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+.fade-in { animation: fadeIn 0.3s ease-in-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Acordeón */
+.subject-details { display: block; opacity: 1; }
+@media (max-width: 767px) {
+    .subject-details { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; opacity: 0; overflow: hidden; }
+    .subject-details.open { grid-template-rows: 1fr; opacity: 1; margin-top: 0.5rem; }
+}
+.subject-details-inner { min-height: 0; }
+
+/* Fantasma */
+.ghost-value {
+    background-color: #fce7f3 !important; color: #db2777 !important; border: 1px dashed #f472b6 !important;
+    font-style: italic !important; font-weight: 600 !important; transition: all 0.2s ease;
+    animation: ghostPulse 2s infinite ease-in-out !important; 
+}
+html.dark .ghost-value {
+    background-color: rgba(88, 28, 135, 0.3) !important; color: #e879f9 !important; border: 1px dashed #d946ef !important;
+    box-shadow: 0 0 5px rgba(217, 70, 239, 0.2);
+}
+.ghost-value:focus { outline: none !important; border-style: solid !important; }
+
+
+/* ========================================= */
+/* --- TEMA 1: ESPRESSO (Latte Premium) ---  */
+/* ========================================= */
+
+/* 1. Definición de Variables (Colores Limpios) */
+[data-theme="coffee"] { 
+    --primary-50: #fdfaf5;   /* Crema Hueso */
+    --primary-100: #f5f0e6; 
+    --primary-200: #e7e0d3; 
+    --primary-500: #5d4037;  /* Café Grano */
+    --primary-600: #3e2723;  /* Café Espresso */
+    --primary-700: #281912; 
+}
+
+/* 2. Base y Fondo (Fondo Claro con Textura) */
+[data-theme="coffee"] body { 
+    background-color: #f5f0e6 !important; 
+    color: #3e2723 !important; 
+    background-image: radial-gradient(#a1887f5f 1.1px, transparent 0.8px) !important; 
+    background-size: 10px 10px !important; 
+}
+
+/* 3. Cabecera (Oscura para destacar el logo claro) */
+[data-theme="coffee"] #capture-area > div:first-child { 
+    background-color: #281912 !important; 
+    border: 2px solid #3e2723 !important; 
+    border-radius: 12px !important;
+}
+[data-theme="coffee"] h1, [data-theme="coffee"] h1 svg { color: #fdfaf5 !important; fill: #fdfaf5 !important; }
+[data-theme="coffee"] #capture-area p { color: #d1c7b7 !important; } /* Texto "Gestiona..." */
+
+/* 4. Tarjetas y Modales (Fondo Claro, Borde Café) */
+[data-theme="coffee"] .bg-white, 
+[data-theme="coffee"] .dark\:bg-gray-800, 
+[data-theme="coffee"] div[id*="modal"]:not(#story-modal) > div {
+    background-color: #ffffff !important;
+    border: 2px solid #3e2723 !important;
+    box-shadow: 4px 4px 0px #d7ccc8 !important;
+    color: #3e2723 !important;
+}
+
+/* 5. Títulos de Ramos (Estilo Minimalista) */
+[data-theme="coffee"] input.font-bold {
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    color: #3e2723 !important;
+    transition: border-color 0.3s;
+}
+[data-theme="coffee"] input.font-bold:focus { 
+    border-bottom-color: #5d4037 !important;
+    outline: none !important;
+}
+
+/* 6. Botones de Acción (Alto Contraste) */
+[data-theme="coffee"] #action-buttons button[onclick*="open"] { 
+    background-color: #3e2723 !important; 
+    color: #fdfaf5 !important; 
+    border: none !important;
+    font-weight: 700 !important;
+}
+[data-theme="coffee"] #action-buttons button[onclick*="open"] svg { stroke: #fdfaf5 !important; }
+
+/* 7. Blindaje contra Textos Grises */
+[data-theme="coffee"] .text-gray-400, 
+[data-theme="coffee"] .text-gray-500, 
+[data-theme="coffee"] .text-gray-600,
+[data-theme="coffee"] p, [data-theme="coffee"] span, [data-theme="coffee"] h2, [data-theme="coffee"] h3 {
+    color: #3e2723 !important;
+    opacity: 1 !important;
+}
+
+/* 8. Fix Privacidad e Importante (Contraste Especial) */
+[data-theme="coffee"] #info-modal .bg-gray-50,
+[data-theme="coffee"] #info-modal .bg-emerald-50 {
+    background-color: #281912 !important; /* Fondo oscuro para resaltar */
+    border-radius: 8px;
+}
+[data-theme="coffee"] #info-modal .bg-gray-50 *,
+[data-theme="coffee"] #info-modal .bg-emerald-50 * {
+    color: #fdfaf5 !important; /* Texto claro */
+}
+[data-theme="coffee"] #info-modal svg[class*="emerald"] {
+    color: #34d399 !important; /* Verde menta para privacidad */
+    stroke: #34d399 !important;
+}
+
+/* 9. Modal Historia (Contraste Diferente) */
+[data-theme="coffee"] #story-modal > div {
+    background-color: #1a110f !important;
+    color: #fdfaf5 !important;
+}
+[data-theme="coffee"] #story-modal h2 { color: #fdfaf5 !important; }
+[data-theme="coffee"] #story-modal p { color: #d1c7b7 !important; }
+
+/* ========================================= */
+/* --- TEMA 2: RETRO --- */
+/* ========================================= */
+[data-theme="retro"] { --primary-50: #001a00; --primary-100: #003300; --primary-200: #004400; --primary-500: #33ff33; --primary-600: #00cc00; --primary-700: #008800; }
+[data-theme="retro"] body { background-color: #000000 !important; font-family: 'VT323', monospace !important; font-size: 1.1rem !important; letter-spacing: 0.5px !important; background-image: linear-gradient(rgba(0, 255, 0, 0.04) 1px, transparent 1px) !important; background-size: 100% 3px !important; }
+[data-theme="retro"] main, [data-theme="retro"] footer, [data-theme="retro"] body > div { background-color: transparent !important; border: none !important; box-shadow: none !important; }
+
+[data-theme="retro"] .bg-white, [data-theme="retro"] .dark\:bg-gray-800, [data-theme="retro"] #theme-modal .bg-white, [data-theme="retro"] #story-modal .bg-white { background-color: #050505 !important; border: 1px solid #33ff33 !important; box-shadow: 4px 4px 0px rgba(0, 68, 0, 0.8) !important; border-radius: 0 !important; }
+[data-theme="retro"] h1, [data-theme="retro"] h2, [data-theme="retro"] p:not(#terminal-content *), [data-theme="retro"] span:not(#terminal-content *), [data-theme="retro"] label, [data-theme="retro"] input, [data-theme="retro"] select, [data-theme="retro"] button { color: #33ff33 !important; }
+
+[data-theme="retro"] input:not(.font-bold), [data-theme="retro"] select, [data-theme="retro"] textarea { background-color: #001100 !important; border: 1px solid #006600 !important; border-radius: 0 !important; font-family: 'VT323', monospace !important; }
+[data-theme="retro"] button:not([aria-label^="Tema"]) { background-color: #002200 !important; color: #33ff33 !important; border: 1px solid #33ff33 !important; border-radius: 0 !important; text-transform: uppercase; box-shadow: 2px 2px 0px #004400 !important; }
+/* EL MARTILLO PARA EL TEXTO DE LA HISTORIA */
+[data-theme="coffee"] #story-modal div.p-6 * {
+    color: #fefce8 !important;
+    opacity: 1 !important;
+}
+
+/* --- TÍTULO FLOTANTE: RETRO --- */
+[data-theme="retro"] input.font-semibold,
+[data-theme="retro"] input.font-bold {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-bottom: 2px solid transparent !important;
+    border-radius: 0 !important;
+    transition: border-bottom-color 0.3s ease;
+}
+
+[data-theme="retro"] input.font-semibold:focus,
+[data-theme="retro"] input.font-bold:focus {
+    border-bottom-color: #33ff33 !important; /* El verde neón clásico del tema */
+    outline: none !important;
+}
+
+
+/* 1. Logo del Footer: Verde brillante y sólido */
+[data-theme="retro"] footer svg {
+    color: #33ff33 !important;
+    fill: #33ff33 !important;
+    
+    /* Efecto de relieve retro: Sombra dura hacia abajo/derecha */
+    filter: drop-shadow(2px 2px 0px #004400) !important;
+}
+
+/* Y específicamente para la caja de la cita que te gustó */
+[data-theme="coffee"] #story-modal .bg-primary-50 {
+    background-color: rgba(93, 64, 55, 0.4) !important;
+    border-left: 4px solid #e7e0d3 !important;
+}
+/* --- AJUSTE ICONO PRIVACIDAD (Espresso) --- */
+
+/* 1. Contenedor del icono de Privacidad */
+[data-theme="coffee"] #info-modal svg.text-emerald-500,
+[data-theme="coffee"] #info-modal .bg-emerald-50,
+[data-theme="coffee"] #info-modal .dark\:bg-emerald-900\/30 {
+    background-color: #064e3b !important; /* Verde esmeralda muy oscuro */
+    border: 1px solid #10b981 !important; /* Borde verde brillante */
+    opacity: 1 !important;
+}
+
+/* 2. El Escudo (Icono) de Privacidad */
+[data-theme="coffee"] #info-modal svg.text-emerald-500 path,
+[data-theme="coffee"] #info-modal .text-emerald-600 {
+    color: #34d399 !important; /* Verde menta brillante para contraste */
+    stroke: #34d399 !important;
+    fill: transparent !important;
+}
+
+/* 3. Título de Privacidad */
+[data-theme="coffee"] #info-modal h3.text-emerald-900,
+[data-theme="coffee"] #info-modal .dark\:text-emerald-400 {
+    color: #e7e0d3 !important; /* Mantenemos el texto en crema hueso */
+}
+
+/* --- FIX ICONO PRIVACIDAD ESPRESSO --- */
+
+/* Forzar fondo oscuro para el contenedor del escudo */
+[data-theme="coffee"] #info-modal .bg-emerald-50,
+[data-theme="coffee"] #info-modal .dark\:bg-emerald-900\/30,
+[data-theme="coffee"] #info-modal div[class*="bg-emerald"] {
+    background-color: #064e3b !important; /* Verde bosque muy oscuro */
+    border: 1px solid #10b981 !important;
+}
+
+/* Forzar color verde brillante al escudo mismo */
+[data-theme="coffee"] #info-modal svg.text-emerald-500,
+[data-theme="coffee"] #info-modal svg.text-emerald-500 path,
+[data-theme="coffee"] #info-modal .text-emerald-600,
+[data-theme="coffee"] #info-modal .dark\:text-emerald-400 {
+    color: #34d399 !important;
+    stroke: #34d399 !important;
+}
+
+/* Limpieza de opacidades en el modal de info para Espresso */
+[data-theme="coffee"] #info-modal .opacity-20,
+[data-theme="coffee"] #info-modal .bg-emerald-900\/30 {
+    opacity: 1 !important;
+    background-color: #064e3b !important;
+}
+
+/* --- RECUPERAR TEXTURA DE FONDO ESPRESSO --- */
+[data-theme="coffee"] main, 
+[data-theme="coffee"] footer, 
+[data-theme="coffee"] body > div:not([id*="modal"]) { 
+    background-color: transparent !important; 
+    border: none !important; 
+    box-shadow: none !important; 
+}
+
+/* --- FIX BOTONES ACCIÓN: TEXTO CLARO --- */
+[data-theme="coffee"] #action-buttons button[onclick*="open"] { 
+    background-color: #3e2723 !important; /* Café oscuro */
+    color: #fdfaf5 !important;           /* Texto Crema Hueso */
+    border: 1px solid #5d4037 !important;
+}
+
+/* Forzar el color de la letra y el icono dentro */
+[data-theme="coffee"] #action-buttons button[onclick*="open"] span,
+[data-theme="coffee"] #action-buttons button[onclick*="open"] svg { 
+    color: #fdfaf5 !important; 
+    stroke: #fdfaf5 !important; 
+}
+
+/* Efecto Hover para que se note el cambio */
+[data-theme="coffee"] #action-buttons button[onclick*="open"]:hover {
+    background-color: #5d4037 !important;
+    transform: translateY(-1px);
+}
+
+/* --- FIX BOTONES ACCIÓN: TEXTO CLARO Y SOMBRA 3D --- */
+[data-theme="coffee"] #action-buttons button[onclick*="open"] { 
+    background-color: #3e2723 !important; /* Café Espresso */
+    color: #fdfaf5 !important;           /* Texto Crema Hueso */
+    border: 1px solid #281912 !important;
+    font-weight: 700 !important;
+    
+    /* La Sombra Plana (Efecto 3D) */
+    box-shadow: 4px 4px 0px #d7ccc8 !important; 
+    transition: all 0.2s ease-in-out !important;
+}
+
+/* Forzar el color de la letra y el icono dentro */
+[data-theme="coffee"] #action-buttons button[onclick*="open"] span,
+[data-theme="coffee"] #action-buttons button[onclick*="open"] svg { 
+    color: #fdfaf5 !important; 
+    stroke: #fdfaf5 !important; 
+}
+
+/* Efecto al presionar (Click) para que se sienta el hundimiento */
+[data-theme="coffee"] #action-buttons button[onclick*="open"]:active {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 2px 2px 0px #d7ccc8 !important;
+}
+
+/* Efecto Hover */
+[data-theme="coffee"] #action-buttons button[onclick*="open"]:hover {
+    background-color: #5d4037 !important;
+    box-shadow: 5px 5px 0px #d7ccc8 !important;
+}
+
+/* --- FIX BOTÓN GUARDAR EN GESTIONAR RAMOS --- */
+[data-theme="coffee"] button[onclick*="saveManageChanges"],
+[data-theme="coffee"] #manage-modal button.bg-primary-600 {
+    background-color: #3e2723 !important; /* Café Espresso */
+    color: #fdfaf5 !important;           /* Texto Crema Hueso */
+    border: 1px solid #281912 !important;
+    padding: 0.75rem 1.5rem !important;
+    
+    /* Sombra 3D consistente */
+    box-shadow: 4px 4px 0px #d7ccc8 !important;
+    transition: all 0.2s ease !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Efecto al hacer clic (Hundimiento) */
+[data-theme="coffee"] button[onclick*="saveManageChanges"]:active {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 2px 2px 0px #d7ccc8 !important;
+}
+
+/* Hover para que se note que es clickeable */
+[data-theme="coffee"] button[onclick*="saveManageChanges"]:hover {
+    background-color: #5d4037 !important;
+    box-shadow: 5px 5px 0px #d7ccc8 !important;
+    [data-theme="coffee"] .bg-green-50, 
+[data-theme="coffee"] .dark\:bg-green-900\/30 {
+    background-color: #064e3b !important;
+    border: 1px solid #10b981 !important;
+}
+
+[data-theme="coffee"] .text-green-500,
+[data-theme="coffee"] .text-green-600 {
+    color: #34d399 !important;
+    stroke: #34d399 !important;
+}
+}
+
+/* ========================================= */
+/* --- TEMA 3: NEON NIGHTS (Vibe Cyber) ---  */
+/* ========================================= */
+[data-theme="neon"] { 
+    --primary-50: #2d064a; 
+    --primary-100: #4c0577; 
+    --primary-200: #700bb3; 
+    --primary-500: #d946ef; /* Rosa Neón */
+    --primary-600: #c026d3; 
+    --primary-700: #a21caf; 
+}
+
+[data-theme="neon"] body { 
+    background-color: #030005 !important; /* Negro espacial */
+    color: #f5f3ff !important; 
+    /* Malla de ciudad retrofuturista sutil */
+    background-image: linear-gradient(rgba(139, 92, 246, 0.05) 1px, transparent 1px), 
+                      linear-gradient(90deg, rgba(139, 92, 246, 0.05) 1px, transparent 1px) !important;
+    background-size: 30px 30px !important;
+}
+
+/* Tarjetas con efecto de cristal oscuro y borde cian/morado */
+[data-theme="neon"] .bg-white, 
+[data-theme="neon"] .dark\:bg-gray-800, 
+[data-theme="neon"] #theme-modal .bg-white, 
+[data-theme="neon"] #story-modal .bg-white {
+    background-color: rgba(13, 2, 25, 0.9) !important; 
+    border: 1px solid #7c3aed !important; /* Borde violeta eléctrico */
+    box-shadow: 0 0 15px rgba(124, 58, 237, 0.3) !important;
+    border-radius: 10px !important;
+    backdrop-filter: blur(8px);
+}
+
+/* Títulos con brillo de gas neón */
+[data-theme="neon"] h1, [data-theme="neon"] h2, [data-theme="neon"] h3 { 
+    color: #00f2ff !important; /* Cian Eléctrico */
+    text-shadow: 0 0 10px rgba(0, 242, 255, 0.6), 0 0 20px rgba(0, 242, 255, 0.2) !important;
+}
+
+/* --- BOTONES EXAMEN Y ESCALA (Cian neón con texto oscuro) --- */
+[data-theme="neon"] #action-buttons button[onclick="openExamCalculator()"], 
+[data-theme="neon"] #action-buttons button[onclick="openScaleModal()"] { 
+    background: #00f2ff !important; 
+    color: #030005 !important; 
+    border: none !important;
+    font-weight: 800 !important;
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.5) !important;
+    transition: all 0.3s ease;
+}
+
+[data-theme="neon"] #action-buttons button[onclick*="open"]:hover {
+    box-shadow: 0 0 25px rgba(0, 242, 255, 0.8) !important;
+    transform: scale(1.02);
+}
+
+[data-theme="neon"] #action-buttons button svg { 
+    stroke: currentColor !important; 
+}
+
+/* Botones secundarios (Borde Rosa) */
+[data-theme="neon"] #action-buttons button:not([onclick*="open"]) {
+    background-color: transparent !important;
+    border: 1px solid #d946ef !important;
+    color: #d946ef !important;
+    box-shadow: inset 0 0 5px rgba(217, 70, 23, 0.1) !important;
+}
+
+/* Botón principal (Guardar/Enviar) */
+[data-theme="neon"] button.bg-primary-600, 
+[data-theme="neon"] #submit-btn { 
+    background: linear-gradient(45deg, #d946ef, #7c3aed) !important;
+    color: #ffffff !important; 
+    font-weight: 900 !important;
+    border: none !important;
+    box-shadow: 0 0 20px rgba(217, 70, 239, 0.4) !important;
+}
+
+/* Inputs con estilo High-Tech */
+[data-theme="neon"] input:not(.font-bold), 
+[data-theme="neon"] select, 
+[data-theme="neon"] textarea { 
+    background-color: #0d011a !important; 
+    border: 1px solid #4c0577 !important; 
+    color: #00f2ff !important; 
+}
+[data-theme="neon"] input:focus {
+    border-color: #d946ef !important;
+    box-shadow: 0 0 8px rgba(217, 70, 239, 0.5) !important;
+    outline: none !important;
+}
+
+/* Título de ramo (Brillo morado suave) */
+[data-theme="neon"] input.font-bold {
+    color: #f5f3ff !important;
+    text-shadow: 0 0 8px rgba(139, 92, 246, 0.5) !important;
+}
+
+/* Footer y textos secundarios */
+[data-theme="neon"] .text-gray-500, 
+[data-theme="neon"] .text-gray-400 { 
+    color: #a78bfa !important; 
+}
+
+/* 1. Contenedor del icono (Cyberpunk Style) */
+[data-theme="neon"] #info-modal .list-none li div.flex-shrink-0 {
+    /* Fondo Cian Eléctrico sólido para máxima visibilidad */
+    background-color: #00f2ff !important;
+    
+    /* Borde Morado Neón para contraste de color complementario */
+    border: 2px solid #bc13fe !important;
+    
+    /* Brillo cian exterior (Glow) */
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.5) !important;
+    
+    /* Bordes redondeados consistentes */
+    border-radius: 8px !important;
+    opacity: 1 !important;
+}
+
+/* 2. El icono vectorial (SVG) en negro profundo */
+[data-theme="neon"] #info-modal .list-none li div.flex-shrink-0 svg {
+    /* Negro puro para que el icono se lea perfectamente sobre el cian */
+    color: #000000 !important;
+    stroke: #000000 !important;
+    stroke-width: 3px !important;
+}
+
+/* 3. Ajuste de los textos para legibilidad neón */
+[data-theme="neon"] #info-modal .list-none li p {
+    color: #ffffff !important; /* Texto base en blanco */
+}
+
+[data-theme="neon"] #info-modal .list-none li p span.font-bold {
+    /* Títulos de la guía en Morado Neón brillante */
+    color: #bc13fe !important;
+    text-shadow: 0 0 5px rgba(188, 19, 254, 0.4) !important;
+}
+
+/* --- TÍTULO FLOTANTE: NEON NIGHTS --- */
+[data-theme="neon"] input.font-semibold,
+[data-theme="neon"] input.font-bold {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-bottom: 2px solid transparent !important;
+    border-radius: 0 !important;
+    transition: all 0.3s ease;
+}
+
+[data-theme="neon"] input.font-semibold:focus,
+[data-theme="neon"] input.font-bold:focus {
+    border-bottom-color: #00f2ff !important; /* El cian eléctrico del tema */
+    text-shadow: 0 0 8px rgba(0, 242, 255, 0.5) !important;
+    outline: none !important;
+}
+
+/* ================================================================= */
+/* --- ESCUDO FINAL: BLOQUE GACHA INMUNE A TODOS LOS TEMAS ---       */
+/* ================================================================= */
+
+/* Blindaje de la terminal */
+html body #hacker-terminal {
+    background-color: #0c0f14 !important;
+    background-image: none !important;
+    border: 1px solid #2d3748 !important;
+    box-shadow: inset 0 4px 10px rgba(0,0,0,0.8) !important;
+    color: #4ade80 !important; 
+    opacity: 1 !important;
+    visibility: visible !important;
+    font-family: ui-monospace, monospace !important;
+}
+
+/* Blindaje de los textos internos */
+html body #terminal-content p {
+    background: transparent !important;
+    text-shadow: none !important;
+    color: inherit;
+    font-family: inherit !important;
+}
+
+/* Blindaje del pie de la terminal */
+html body #hacker-terminal + div {
+    background-color: #1a202c !important;
+    background-image: none !important;
+    border: 1px solid #2d3748 !important;
+    border-top: none !important;
+}
+
+/* Blindaje del botón EJECUTAR_SCRIPT */
+html body #btn-init-hack {
+    background-color: #2d3748 !important;
+    color: #4ade80 !important;
+    border: 1px solid #4ade80 !important;
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.2) !important;
+    font-family: ui-monospace, monospace !important;
+    display: inline-flex !important;
+    text-transform: none !important;
+}
+
+html body #btn-init-hack:hover {
+    background-color: #4a5568 !important;
+}
+
+/* Estilo para el título de temas desbloqueados */
+#special-themes-title {
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 5px rgba(var(--primary-500), 0.2);
+}
+
+/* Animación de entrada para los botones nuevos */
+.zoom-in {
+    animation: zoomIn 0.5s ease-out forwards;
+}
+
+
+@keyframes zoomIn {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* --- FIX DEFINITIVO BOTÓN NEON NIGHTS --- */
+html body #special-themes-grid #btn-theme-neon {
+    border: 2px solid #00f2ff !important; /* Fuerza el Cian */
+    box-shadow: 0 0 8px rgba(0, 242, 255, 0.5) !important; /* Brillo Cian */
+    background-color: #1a0b2e !important; /* Fondo Morado Oscuro */
+    outline: none !important;
+}
+
+/* Para que cuando pases el mouse no se ponga rosa */
+html body #special-themes-grid #btn-theme-neon:hover {
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.8) !important;
+    border-color: #ffffff !important; /* Cambia a blanco al tocarlo para que brille más */
+    transform: scale(1.05);
+}
+
+/* Forzar el color de la estrella dentro del botón */
+html body #btn-theme-neon svg {
+    fill: #00f2ff !important;
+    filter: drop-shadow(0 0 2px #00f2ff) !important;
+}
+
+[data-theme="neon"] main, 
+[data-theme="neon"] footer, 
+[data-theme="neon"] body > div:not([id*="modal"]) { 
+    background-color: transparent !important; 
+    border: none !important; 
+    box-shadow: none !important; 
+}
+
+
+/* EL MARTILLO: Fuerza el Cian en el botón Neon Nights cueste lo que cueste */
+#theme-modal #special-themes-grid button#btn-theme-neon {
+    border: 2px solid #00f2ff !important;
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.6) !important;
+    outline: none !important;
+    --tw-ring-color: transparent !important; /* Apaga el rosa de Tailwind */
+    --tw-ring-offset-width: 0px !important;
+}
+
+/* Fuerza el color de la estrella interna */
+#theme-modal #special-themes-grid #btn-theme-neon svg,
+#theme-modal #special-themes-grid #btn-theme-neon svg path {
+    fill: #00f2ff !important;
+    color: #00f2ff !important;
+}
+
+
+/* Definición de la animación que faltaba */
+@keyframes ghostPulse {
+    0% { box-shadow: 0 0 0 0px rgba(217, 70, 239, 0.5); transform: scale(1); }
+    50% { box-shadow: 0 0 0 8px rgba(217, 70, 239, 0); transform: scale(1.02); }
+    100% { box-shadow: 0 0 0 0px rgba(217, 70, 239, 0); transform: scale(1); }
+}
+
+/* La clase que usa tu JS */
+.ghost-value {
+    background-color: #fdf2f8 !important; /* Un rosa muy clarito */
+    color: #be185d !important;
+    border: 2px dashed #f472b6 !important;
+    animation: ghostPulse 1.5s infinite ease-in-out !important;
+    transition: all 0.2s ease;
+}
+
+/* Ajuste para modo oscuro */
+.dark .ghost-value {
+    background-color: rgba(217, 70, 239, 0.1) !important;
+    color: #f472b6 !important;
+    border-color: #d946ef !important;
+}
+
+/* ========================================= */
+/* --- TEMA 4: VAPORWAVE (Sunset 80s) ---    */
+/* ========================================= */
+[data-theme="vaporwave"] {
+    --primary-500: #ff71ce; --primary-600: #01cdfe; --primary-700: #b967ff;
+}
+
+[data-theme="vaporwave"] body {
+    background-color: #ffdef3 !important;
+    background-image: 
+        linear-gradient(rgba(1, 205, 254, 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(1, 205, 254, 0.2) 1px, transparent 1px) !important;
+    background-size: 30px 30px !important;
+}
+
+/* Transparencia para ver la malla del fondo */
+[data-theme="vaporwave"] main, [data-theme="vaporwave"] #capture-area, [data-theme="vaporwave"] footer {
+    background: transparent !important;
+}
+
+/* Tarjeta con Brillo Externo (Neon Glow) */
+[data-theme="vaporwave"] .bg-white, [data-theme="vaporwave"] .dark\:bg-gray-800 {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border: 2px solid #b967ff !important;
+    border-radius: 20px !important; /* Más curvo como pediste */
+    box-shadow: 0 0 20px rgba(185, 103, 255, 0.4), 0 0 40px rgba(1, 205, 254, 0.2) !important;
+}
+
+/* Ramos Flotantes */
+[data-theme="vaporwave"] input.font-bold {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    color: #4b0082 !important;
+    text-shadow: 1px 1px 0px #ff71ce44;
+}
+[data-theme="vaporwave"] input.font-bold:focus {
+    border-bottom: 2px solid #01cdfe !important;
+    outline: none !important;
+}
+
+/* --- AJUSTE BOTONES ESCALA Y EXAMEN (VAPORWAVE) --- */
+[data-theme="vaporwave"] #action-buttons button[onclick="openExamCalculator()"], 
+[data-theme="vaporwave"] #action-buttons button[onclick="openScaleModal()"] {
+    background: linear-gradient(135deg, #ff71ce 0%, #01cdfe 100%) !important;
+    color: #ffffff !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    border: 2px solid #b967ff !important;
+    /* Mantiene la misma curvatura que tus otros botones */
+    border-radius: 8px !important; 
+    /* Sombra con los colores del tema */
+    box-shadow: 0px 4px 10px rgba(185, 103, 255, 0.4) !important;
+    transition: all 0.2s ease !important;
+}
+
+[data-theme="vaporwave"] #action-buttons button[onclick*="open"]:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0px 6px 15px rgba(1, 205, 254, 0.4) !important;
+}
+
+[data-theme="vaporwave"] #action-buttons button[onclick*="open"]:active {
+    transform: translateY(1px);
+    box-shadow: 0px 2px 5px rgba(185, 103, 255, 0.4) !important;
+}
+
+/* Esto refuerza que el bloque tenga la curva grande y el borde sólido */
+[data-theme="vaporwave"] #subjects-grid .bg-white,
+[data-theme="vaporwave"] #subjects-grid .dark\:bg-gray-800 {
+     border: 3px solid var(--primary-700) !important; /* Borde morado grueso y sólido */
+     border-radius: 24px !important; /* Curva grande y suave */
+    overflow: visible !important
+}
+
+/* 2. "Limpiamos" la cabecera (arriba) y el pie (abajo) internos */
+/* Al quitarles el fondo y el radio, se adaptan perfectamente al contenedor padre */
+[data-theme="vaporwave"] #subjects-grid > div > div:first-child, /* Cabecera (varita/titulo) */
+[data-theme="vaporwave"] #subjects-grid > div > div:last-child   /* Pie (promedio) */ {
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important; /* Anulamos el redondeo pequeño de Tailwind */
+}
+
+/* 3. Un pequeño ajuste extra para la línea divisoria del medio, si es que se ve rara */
+[data-theme="vaporwave"] .ramo-content .grid-cols-2.text-xs {
+     background-color: transparent !important;
+     border-bottom: 1px dashed rgba(185, 103, 255, 0.3) !important; /* Línea sutil */
+}
+
+/* Apuntamos al contenedor interno de todos los modales */
+[data-theme="vaporwave"] div[id*="modal"] > div {
+    /* Cambiamos el fondo a un blanco casi sólido (0.98) */
+    background-color: rgba(255, 255, 255, 0.98) !important;
+    
+    /* Reforzamos el borde morado para que sea consistente con los ramos */
+    border: 3px solid #b967ff !important;
+    
+    /* Mantenemos el radio de borde curvo para que combine con el nuevo estilo */
+    border-radius: 24px !important;
+    
+    /* Añadimos un resplandor más fuerte para separar el modal del fondo */
+    box-shadow: 10px 10px 0px #01cdfe, 0 0 30px rgba(185, 103, 255, 0.4) !important;
+    
+    /* Aseguramos que el contenido no se salga de las esquinas redondeadas */
+    overflow: hidden !important;
+}
+
+/* Ajuste específico para el encabezado de los modales que tengan degradado */
+[data-theme="vaporwave"] div[id*="modal"] .bg-gradient-to-r {
+    background: linear-gradient(90deg, #ff71ce 0%, #b967ff 100%) !important;
+    border-bottom: 2px solid #b967ff !important;
+}
+
+/* Apuntamos específicamente al botón de enviar del modal de contacto */
+[data-theme="vaporwave"] #contact-modal #submit-btn {
+    /* Degradado inverso para que resalte del resto */
+    background: linear-gradient(135deg, #b967ff 0%, #ff71ce 100%) !important;
+    
+    /* Texto en blanco puro y bien grueso para máxima legibilidad */
+    color: #ffffff !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    
+    /* Borde y sombra consistentes con el estilo Vaporwave */
+    border: 2px solid #01cdfe !important;
+    box-shadow: 4px 4px 0px #01cdfe !important;
+    border-radius: 12px !important;
+    
+    transition: all 0.2s ease !important;
+}
+
+/* Efecto Hover para el botón de contacto */
+[data-theme="vaporwave"] #contact-modal #submit-btn:hover {
+    filter: brightness(1.1);
+    transform: translate(-2px, -2px) !important;
+    box-shadow: 6px 6px 0px #01cdfe !important;
+}
+
+/* Estado deshabilitado (cuando el usuario ya envió un mensaje) */
+[data-theme="vaporwave"] #contact-modal #submit-btn:disabled {
+    background: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+}
+
+/* Ajuste del icono dentro del botón para que sea blanco */
+[data-theme="vaporwave"] #contact-modal #submit-btn svg {
+    stroke: #ffffff !important;
+    filter: drop-shadow(1px 1px 0px rgba(0,0,0,0.2)) !important;
+}
+
+[data-theme="vaporwave"] #info-modal .list-none li div.flex-shrink-0 {
+    /* Degradado vibrante de Rosa a Cian (estilo Arcade) */
+    background: linear-gradient(135deg, #ff71ce 0%, #01cdfe 100%) !important;
+    
+    /* Borde Morado Neón para definir la forma */
+    border: 2px solid #b967ff !important;
+    
+    /* Pequeño resplandor cian externo */
+    box-shadow: 0 0 12px rgba(1, 205, 254, 0.6) !important;
+    
+    /* Bordes redondeados consistentes con el tema */
+    border-radius: 10px !important;
+    opacity: 1 !important;
+}
+
+/* 2. El icono vectorial (SVG) dentro */
+[data-theme="vaporwave"] #info-modal .list-none li div.flex-shrink-0 svg {
+    /* Blanco puro y grueso para contraste máximo sobre el degradado */
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    stroke-width: 2.5px !important;
+    
+    /* Una pequeña sombra morada al propio icono para efecto 3D */
+    filter: drop-shadow(2px 2px 0px rgba(185, 103, 255, 0.4)) !important;
+}
+
+/* 3. Ajuste de los textos de la guía para que combinen */
+[data-theme="vaporwave"] #info-modal .list-none li p {
+    /* Usamos un morado oscuro para el texto normal, para que sea legible */
+    color: #4b0082 !important;
+}
+
+[data-theme="vaporwave"] #info-modal .list-none li p span.font-bold {
+    /* Los títulos de cada punto en Rosa Neón */
+    color: #ff71ce !important;
+    text-shadow: 1px 1px 0px rgba(1, 205, 254, 0.3) !important;
+}
+
+/* 1. Estilo de los elementos de la lista (Ramos para ordenar) */
+[data-theme="vaporwave"] #manage-subjects-list li,
+[data-theme="vaporwave"] #order-subjects-list li {
+    background-color: rgba(255, 255, 255, 0.7) !important;
+    border: 2px solid #b967ff !important;
+    border-radius: 12px !important;
+    color: #4b0082 !important;
+    margin-bottom: 8px !important;
+    box-shadow: 4px 4px 0px rgba(1, 205, 254, 0.2) !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Efecto al arrastrar o pasar el mouse */
+[data-theme="vaporwave"] #manage-subjects-list li:hover {
+    transform: translateX(5px) !important;
+    border-color: #ff71ce !important;
+    background-color: #ffffff !important;
+}
+
+/* 2. EL BOTÓN DE GUARDAR (VISIBILIDAD MÁXIMA) */
+/* Buscamos el botón principal de acción dentro del modal */
+[data-theme="vaporwave"] div[id*="modal"] button.bg-primary-600,
+[data-theme="vaporwave"] #save-order-btn,
+[data-theme="vaporwave"] button[onclick*="save"],
+[data-theme="vaporwave"] button[onclick*="close"] {
+    background: linear-gradient(135deg, #01cdfe 0%, #b967ff 100%) !important;
+    color: #ffffff !important;
+    font-weight: 900 !important;
+    border: 2px solid #ffffff !important;
+    border-radius: 12px !important;
+    padding: 10px 10px !important;
+    box-shadow: 0px 0px 15px rgba(1, 205, 254, 0.6), 4px 4px 0px #ff71ce !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+[data-theme="vaporwave"] div[id*="modal"] button.bg-primary-600:hover {
+    filter: brightness(1.2);
+    transform: scale(1.05) !important;
+    box-shadow: 0px 0px 25px rgba(255, 113, 206, 0.8), 6px 6px 0px #01cdfe !important;
+}
+
+/* 3. Iconos de eliminar o mover dentro de la lista */
+[data-theme="vaporwave"] #manage-subjects-list button svg {
+    color: #ff71ce !important; /* Rosa para el botón eliminar */
+    transition: transform 0.2s !important;
+}
+
+[data-theme="vaporwave"] #manage-subjects-list button:hover svg {
+    transform: scale(1.2) rotate(10deg);
+    color: #b967ff !important;
+}
+
+/* 4. Títulos del modal */
+[data-theme="vaporwave"] div[id*="modal"] h2,
+[data-theme="vaporwave"] div[id*="modal"] h3 {
+    color: #b967ff !important;
+    text-shadow: 1px 1px 0px #01cdfe !important;
+}
+
+[data-theme="vaporwave"] #story-modal h2, 
+[data-theme="vaporwave"] #story-modal h3,
+[data-theme="vaporwave"] .history-title {
+    color: #ffffff !important; /* Blanco para que resalte en el degradado */
+    text-shadow: 3px 3px 0px #b967ff, 0 0 15px rgba(1, 205, 254, 0.6) !important;
+}
+
+/* --- FIX VAPORWAVE: TÍTULO H3 ZONA SECRETA --- */
+
+[data-theme="vaporwave"] #story-modal h3 {
+    /* 1. Cambiamos el color a Cian para que contraste con el fondo rosa/morado */
+    color: #01cdfe !important;
+    
+    /* 2. Sombra morada más oscura y sólida para "despegar" la letra del fondo */
+    text-shadow: 2px 2px 0px #200a30 !important;
+    
+    /* 3. Estética: Un poco más de espacio entre letras para legibilidad */
+    letter-spacing: 0.1em !important;
+    font-weight: 900 !important;
+    
+    /* 4. Opcional: Un pequeño borde inferior neón para resaltar que es una sección */
+    display: inline-block;
+    border-bottom: 2px solid #ff71ce !important;
+    margin-bottom: 8px !important;
+}
+
+/* 1. LOGO INICIAL: Degradado Rosa/Cian */
+[data-theme="vaporwave"] h1 svg {
+    /* Usamos un filtro para dar color neón vibrante */
+    color: #ff71ce !important; /* Rosa principal */
+    fill: #ff71ce !important;
+    filter: drop-shadow(2px 2px 0px #01cdfe) !important; /* Sombra Cian dura */
+}
+
+/* 2. TÍTULO "MIS RAMOS": Estilo 80s */
+[data-theme="vaporwave"] h1 {
+    color: #4b0082 !important; /* Morado Indigo para legibilidad */
+    /* Sombra de texto doble (Neon Glow) */
+    text-shadow: 2px 2px 0px #ff71ce, 4px 4px 0px rgba(1, 205, 254, 0.3) !important;
+}
+
+/* 3. LOGO DEL FOOTER: Sincronizado con el tema */
+[data-theme="vaporwave"] footer svg {
+    color: #01cdfe !important; /* Cian vibrante */
+    filter: drop-shadow(1px 1px 0px #ff71ce) !important;
+}
+
+/* 4. LINK "SUGERENCIAS Y ERRORES": Rosa Neón */
+[data-theme="vaporwave"] footer button[onclick*="toggleContactModal"] {
+    color: #ff71ce !important;
+    font-weight: 700 !important;
+    text-shadow: 1px 1px 0px rgba(1, 205, 254, 0.5) !important;
+}
+
+
+
+/* ========================================= */
+/* --- TEMA 5: FOREST ZEN (SOLUCIÓN FINAL) --- */
+/* ========================================= */
+[data-theme="forest"] {
+    --primary-500: #83c092; /* Verde Hoja */
+    --primary-600: #a7c080; /* Musgo */
+    --primary-700: #7fbbb3; /* Verde Agua */
+}
+
+[data-theme="forest"] body {
+    background-color: #2d353b !important;
+    color: #dbbc7f !important; /* Texto Arena */
+    background-image: 
+        linear-gradient(rgba(167, 192, 128, 0.05) 1px, transparent 1px), 
+        linear-gradient(90deg, rgba(167, 192, 128, 0.05) 1px, transparent 1px) !important;
+    background-size: 25px 25px !important;
+}
+
+/* Limpieza de contenedores para ver la textura */
+[data-theme="forest"] main, 
+[data-theme="forest"] #capture-area,
+[data-theme="forest"] footer {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Tarjeta Principal (Glassmorphism Suave) */
+[data-theme="forest"] .bg-white, 
+[data-theme="forest"] .dark\:bg-gray-800 {
+    background-color: rgba(52, 63, 68, 0.9) !important;
+    border: 1px solid rgba(167, 192, 128, 0.2) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(4px);
+}
+
+/* Consistencia de Cabeceras en los Ramos */
+[data-theme="forest"] #subjects-grid > div > div:first-child,
+[data-theme="forest"] #subjects-grid > div > div:last-child {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+}
+
+/* Nombres de Ramos Flotantes */
+[data-theme="forest"] input.font-bold {
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    color: #dbbc7f !important;
+    text-align: center;
+    transition: border-color 0.3s;
+}
+[data-theme="forest"] input.font-bold:focus {
+    border-bottom: 2px solid #83c092 !important;
+    outline: none !important;
+}
+
+/* --- BOTONES ESCALA Y EXAMEN (Estilo Zen) --- */
+[data-theme="forest"] #action-buttons button[onclick="openExamCalculator()"], 
+[data-theme="forest"] #action-buttons button[onclick="openScaleModal()"] {
+    background-color: transparent !important;
+    color: #a7c080 !important;
+    border: 2px solid #a7c080 !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    transition: all 0.3s ease !important;
+}
+
+[data-theme="forest"] #action-buttons button[onclick*="open"]:hover {
+    background-color: #a7c080 !important;
+    color: #2d353b !important; /* Inversión de color */
+    box-shadow: 0 0 15px rgba(167, 192, 128, 0.4) !important;
+}
+
+/* Modales Sólidos para Forest */
+[data-theme="forest"] div[id*="modal"] > div {
+    background-color: #2d353b !important;
+    border: 1px solid #475258 !important;
+    border-radius: 20px !important;
+    color: #dbbc7f !important;
+}
+
+[data-theme="forest"] #info-modal .list-none li div.flex-shrink-0 {
+    /* Fondo verde musgo sólido para resaltar */
+    background-color: var(--primary-600) !important;
+    
+    /* Borde suave en color arena para dar definición */
+    border: 1px solid #dbbc7f !important;
+    
+    /* Resplandor verde muy sutil (Zen glow) */
+    box-shadow: 0 0 10px rgba(167, 192, 128, 0.3) !important;
+    
+    /* Bordes redondeados orgánicos */
+    border-radius: 10px !important;
+    opacity: 1 !important;
+}
+
+/* 2. El icono vectorial (SVG) en contraste oscuro */
+[data-theme="forest"] #info-modal .list-none li div.flex-shrink-0 svg {
+    /* Usamos el color del fondo oscuro para que el icono "perfore" el verde */
+    color: #2d353b !important;
+    stroke: #2d353b !important;
+    stroke-width: 2.5px !important;
+}
+
+/* 3. Ajuste de los textos para que armonicen con la paleta */
+[data-theme="forest"] #info-modal .list-none li p {
+    color: #dbbc7f !important; /* Texto Arena */
+}
+
+[data-theme="forest"] #info-modal .list-none li p span.font-bold {
+    /* Títulos de la guía en verde hoja brillante */
+    color: var(--primary-500) !important;
+}
+
+[data-theme="forest"] #story-modal .bg-gradient-to-r {
+    background: linear-gradient(135deg, #343f44 0%, #2d353b 100%) !important;
+    border-bottom: 1px solid rgba(167, 192, 128, 0.2) !important;
+}
+
+/* 2. Textos del Título y Subtítulo: Usamos el tono Arena (#dbbc7f) */
+[data-theme="forest"] #story-modal h2 {
+    color: #dbbc7f !important; /* Color Arena principal */
+    font-weight: 800 !important;
+    letter-spacing: -0.02em;
+}
+
+[data-theme="forest"] #story-modal p.text-blue-100 {
+    color: #a7c080 !important; /* Verde Musgo para el subtítulo */
+    opacity: 0.9 !important;
+}
+
+/* 3. Ajuste de la "Zona Secreta" (H3) en el Bosque */
+[data-theme="forest"] #story-modal h3 {
+    color: #83c092 !important; /* Verde Hoja brillante */
+    text-transform: lowercase; /* Estética minimalista */
+    font-variant: small-caps;
+    letter-spacing: 0.1em;
+    border-left: 3px solid #dbbc7f; /* Una "rama" de color arena */
+    padding-left: 12px;
+    margin-bottom: 12px !important;
+}
+
+/* 4. Divisor Discontinuo: Más sutil para que parezca una textura natural */
+[data-theme="forest"] #story-modal .border-dashed {
+    border-color: rgba(219, 188, 127, 0.15) !important;
+}
+
+/* 5. Botón X de Cierre: Estilo piedra tallada */
+[data-theme="forest"] #story-modal button[onclick*="close"] {
+    background-color: rgba(52, 63, 68, 0.5) !important;
+    color: #dbbc7f !important;
+    border: 1px solid rgba(167, 192, 128, 0.3) !important;
+    border-radius: 8px;
+}
+
+[data-theme="forest"] #story-modal button[onclick*="close"]:hover {
+    background-color: #a7c080 !important;
+    color: #2d353b !important;
+    transform: scale(1.1);
+}
+
+/* ========================================================= */
+/* --- CABECERA FOREST ZEN (LIMPIA Y SIMPLE) --- */
+/* ========================================================= */
+
+/* 1. EL LOGO (SVG): Verde Musgo Suave */
+[data-theme="forest"] h1 svg {
+    color: #a7c080 !important; /* Verde principal */
+    fill: currentColor !important;
+    
+    /* Sombra suave para que no se pierda en el fondo oscuro */
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) !important;
+    
+    /* Aseguramos que NO se mueva ni rote */
+    transform: none !important; 
+    transition: none !important;
+}
+
+/* 2. EL TÍTULO "MIS RAMOS": Color Arena */
+[data-theme="forest"] h1 {
+    color: #dbbc7f !important; /* Contraste cálido */
+    
+    /* Sombra ligera para legibilidad */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5) !important;
+    
+    /* ELIMINAMOS cualquier borde o decoración extra */
+    border: none !important;
+    padding-bottom: 0 !important;
+    
+    /* Respetamos la fuente global (no forzamos Georgia) */
+    font-family: inherit !important; 
+    letter-spacing: normal !important;
+}
+
+/* 3. EL SUBTÍTULO: Verde Hoja */
+[data-theme="forest"] #capture-area p {
+    color: #83c092 !important;
+    opacity: 0.9 !important;
+    
+    /* Respetamos la fuente global */
+    font-family: inherit !important;
+    font-style: normal !important;
+    margin-top: 0 !important;
+}
+
+/* 4. LIMPIEZA TOTAL: Aseguramos que no aparezcan iconos extra */
+[data-theme="forest"] #capture-area p::before {
+    content: none !important;
+    display: none !important;
+}
+
+/* ========================================= */
+/* --- TEMA 6: LUXURY GOLD (REFINADO) ---    */
+/* ========================================= */
+[data-theme="luxury"] {
+    --primary-500: #d4af37; /* Oro Metálico Principal */
+    --primary-600: #aa841e;
+    --primary-700: #8a6d15;
+}
+
+[data-theme="luxury"] body {
+    background-color: #0a0a0a !important;
+    color: #f0e6d2 !important;
+    /* Fondo con foco de luz central */
+    background-image: radial-gradient(circle at center, #1a1a1a 0%, #000000 80%) !important;
+    font-family: 'Georgia', serif;
+}
+
+/* --- MEJORA DEL BLOQUE PRINCIPAL (H1 + LOGO) --- */
+/* Este es el contenedor de arriba */
+[data-theme="luxury"] #capture-area > div:first-child {
+    /* Fondo semitransparente oscuro para resaltar el oro */
+    background-color: rgba(20, 20, 20, 0.6) !important;
+    /* Borde dorado sólido y brillante */
+    border: 2px solid var(--primary-500) !important;
+    border-radius: 20px !important;
+    /* Resplandor dorado externo (Glow) */
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.3) !important;
+    backdrop-filter: blur(5px);
+}
+
+/* El texto "Mis Ramos" y el Logo SVG */
+[data-theme="luxury"] h1,
+[data-theme="luxury"] h1 svg {
+    color: var(--primary-500) !important; /* Texto Oro */
+    fill: var(--primary-500) !important;  /* Icono Oro */
+    /* Sombra de texto para efecto metálico */
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5), 0 0 10px rgba(212, 175, 55, 0.5) !important;
+}
+
+/* --- RESTO DEL TEMA --- */
+[data-theme="luxury"] main, 
+[data-theme="luxury"] footer {
+    background: transparent !important;
+}
+
+/* Ramos (Tarjetas) */
+[data-theme="luxury"] #subjects-grid .bg-white, 
+[data-theme="luxury"] #subjects-grid .dark\:bg-gray-800 {
+    background-color: rgba(18, 18, 18, 0.9) !important;
+    border: 1px solid var(--primary-600) !important; /* Borde un poco más oscuro aquí */
+    border-radius: 15px !important;
+    overflow: visible !important;
+    transition: all 0.3s ease;
+}
+/* Hover sutil en los ramos */
+[data-theme="luxury"] #subjects-grid > div:hover {
+     border-color: var(--primary-500) !important;
+     box-shadow: 0 0 15px rgba(212, 175, 55, 0.2) !important;
+}
+
+/* Limpieza cabeceras internas */
+[data-theme="luxury"] #subjects-grid > div > div:first-child,
+[data-theme="luxury"] #subjects-grid > div > div:last-child {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+}
+
+/* Inputs Flotantes Dorados */
+[data-theme="luxury"] input.font-bold {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    color: var(--primary-500) !important;
+    text-align: center;
+    letter-spacing: 0.05em;
+}
+[data-theme="luxury"] input.font-bold:focus {
+    border-bottom: 2px solid #f0e6d2 !important;
+    outline: none !important;
+}
+
+/* --- BOTONES ESCALA Y EXAMEN (LINGOTES) --- */
+[data-theme="luxury"] #action-buttons button[onclick*="open"] {
+    background: linear-gradient(145deg, #d4af37 0%, #aa841e 100%) !important;
+    color: #000000 !important;
+    /* AHORA SÍ: Borde dorado en lugar de marfil */
+    border: 2px solid var(--primary-500) !important; 
+    border-radius: 10px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5) !important;
+    transition: all 0.2s ease-in-out !important;
+}
+[data-theme="luxury"] #action-buttons button[onclick*="open"]:hover {
+    filter: brightness(1.15);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4) !important;
+}
+
+/* Modales */
+[data-theme="luxury"] div[id*="modal"] > div {
+    background-color: #121212 !important;
+    border: 2px solid var(--primary-500) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.15) !important;
+}
+
+/* 1. Contenedor del icono (El cuadradito) */
+[data-theme="luxury"] #info-modal .list-none li div.flex-shrink-0 {
+    /* Fondo dorado sólido para máxima visibilidad */
+    background-color: var(--primary-500) !important;
+    
+    /* Borde fino en marfil para dar definición */
+    border: 1px solid #f0e6d2 !important;
+    
+    /* Brillo dorado sutil alrededor del icono */
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.4) !important;
+    
+    /* Esquinas un poco más redondeadas para elegancia */
+    border-radius: 8px !important;
+    opacity: 1 !important;
+}
+
+/* 2. El icono vectorial (SVG) dentro del contenedor */
+[data-theme="luxury"] #info-modal .list-none li div.flex-shrink-0 svg {
+    /* Color negro/oscuro para contrastar con el fondo dorado */
+    color: #0a0a0a !important;
+    stroke: #0a0a0a !important;
+    
+    /* Aseguramos que el trazo sea lo suficientemente grueso */
+    stroke-width: 2.5px !important;
+}
+
+/* 3. Ajuste de los textos de la guía para que el marfil resalte */
+[data-theme="luxury"] #info-modal .list-none li p {
+    color: #f0e6d2 !important;
+}
+
+[data-theme="luxury"] #info-modal .list-none li p span.font-bold {
+    /* El título de cada punto de la guía en oro */
+    color: var(--primary-500) !important;
+    text-shadow: 0 0 5px rgba(212, 175, 55, 0.2) !important;
+}
+
+/* 1. Encabezado: Limpio, negro sólido y elegante */
+[data-theme="luxury"] #story-modal .bg-gradient-to-r {
+    background: #0a0a0a !important; /* Negro absoluto */
+    border-bottom: 1px solid rgba(212, 175, 55, 0.4) !important; /* Línea de oro sutil */
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+}
+
+/* 2. Título y Subtítulo: Oro puro sobre negro */
+[data-theme="luxury"] #story-modal h2 {
+    color: #d4af37 !important; /* Oro metálico */
+    font-family: 'Georgia', serif !important;
+    font-weight: 300 !important; /* Más delgado = más elegante */
+    text-transform: uppercase;
+    letter-spacing: 4px; /* Mucho aire entre letras */
+}
+
+[data-theme="luxury"] #story-modal p.text-blue-100 {
+    color: #f0e6d2 !important; /* Marfil para suavizar */
+    font-family: 'Georgia', serif !important;
+    font-style: italic;
+    opacity: 0.6 !important;
+    letter-spacing: 1px;
+}
+
+/* 3. Zona Secreta (H3): Minimalismo puro */
+[data-theme="luxury"] #story-modal h3 {
+    color: #d4af37 !important;
+    font-family: 'Georgia', serif !important;
+    text-align: left;
+    font-size: 0.75rem !important;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 2rem !important;
+    opacity: 0.8;
+    
+    /* Solo una pequeña marca dorada a la izquierda */
+    display: block;
+    border-left: 1px solid #d4af37;
+    padding-left: 15px;
+    border-bottom: none !important;
+}
+
+/* 4. El botón X de cierre: Discreto */
+[data-theme="luxury"] #story-modal button[onclick*="close"] {
+    background-color: transparent !important;
+    color: #d4af37 !important;
+    border: 1px solid rgba(212, 175, 55, 0.2) !important;
+    border-radius: 0; /* Cuadrado para look arquitectónico */
+    opacity: 0.5;
+}
+
+[data-theme="luxury"] #story-modal button[onclick*="close"]:hover {
+    opacity: 1;
+    background-color: rgba(212, 175, 55, 0.1) !important;
+}
+
+
+/* ================================================= */
+/* FIX MOBILE S — ICONO OJO ACORDEÓN                 */
+/* ================================================= */
+
+/* Limpiamos el parche anterior y usamos una solución más estable */
+@media (max-width: 360px) {
+    /* Aseguramos que el contenedor padre no permita desbordamientos */
+    #subjects-grid > div > div:first-child {
+        padding-right: 0.5rem !important; /* Reducimos padding lateral en Mobile S */
+        padding-left: 0.5rem !important;
+    }
+
+    /* Ajustamos el tamaño del input para que siempre deje ver los iconos */
+    #subjects-grid input.flex-1 {
+        font-size: 0.85rem !important; /* Texto un poco más pequeño en 320px */
+        min-width: 50px !important;    /* Evita que el input desaparezca */
+    }
+
+    /* Quitamos el posicionamiento absoluto que rompe el flujo */
+    #subjects-grid button[onclick*="toggleRamo"] {
+        position: static !important; 
+        transform: none !important;
+        flex-shrink: 0 !important;
+    }
+}
+
+
+
+/* --- FIX GLOBAL PARA EL MENÚ MÁGICO --- */
+/* BLINDAJE FINAL DEL MENÚ MÁGICO */
+div[id*="magic-menu-"] {
+    /* Forzamos fondo sólido según el modo para que no se trasluzca nada */
+    background-color: #ffffff !important; 
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
+}
+
+.dark div[id*="magic-menu-"] {
+    background-color: #1f2937 !important; /* Gris oscuro sólido */
+    border-color: #374151 !important;
+}
+
+/* Ajuste para temas neón/Vaporwave) */
+[data-theme="neon"] div[id*="magic-menu-"],
+[data-theme="vaporwave"] div[id*="magic-menu-"] {
+    background-color: #0d011a !important; /* Morado/Negro muy oscuro y sólido */
+    border: 1px solid var(--primary-500) !important;
+}
+
+/* Aseguramos que el contenido del menú siempre sea legible */
+div[id*="magic-menu-"] button {
+    position: relative;
+    z-index: 99999;
+}
+
+/* --- MEJORA DE VISIBILIDAD: SOLO COLORES SIMPLES EN MODO CLARO --- */
+
+/* 1. Ajuste del bloque del encabezado (Gradiente de Título y Subtítulo)
+      Se aplica solo si: NO es modo oscuro Y NO es un tema Gacha */
+html:not(.dark):not([data-theme="coffee"]):not([data-theme="retro"]):not([data-theme="neon"]):not([data-theme="vaporwave"]):not([data-theme="forest"]):not([data-theme="luxury"]) #story-modal .bg-gradient-to-r {
+    background: linear-gradient(90deg, 
+        rgb(var(--primary-700)) 0%, 
+        rgb(var(--primary-600)) 100%
+    ) !important;
+}
+
+/* 2. Ajuste del botón de cierre (X) para asegurar contraste en temas simples */
+html:not(.dark):not([data-theme="coffee"]):not([data-theme="retro"]):not([data-theme="neon"]):not([data-theme="vaporwave"]):not([data-theme="forest"]):not([data-theme="luxury"]) #story-modal button[onclick*="close"] {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+
+
+
+/* =========================================
+   ESTILOS PARA EXPORTACIÓN DE IMAGEN (Reporte Premium)
+   ========================================= */
+#snapshot-container {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    width: 850px; /* Un poco más ancho para mejor respiro */
+    /* Un degradado sutil y profesional de fondo */
+    background: linear-gradient(135deg, #f0f7ff 0%, #e0efff 100%);
+    padding: 40px 50px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #1f2937;
+    box-sizing: border-box;
+}
+
+/* Cabecera con Logo */
+.snap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #2563eb;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.snap-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Tarjeta de Ramo (Lista completa) */
+.snap-subject-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 24px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border-left: 4px solid transparent; /* Borde dinámico para el estado */
+}
+
+/* Footer con Branding */
+.snap-footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #dbeafe;
+    text-align: center;
+    color: #6b7280;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* --- LIMPIEZA DE CONTENEDORES (CRÍTICO PARA VER TEXTURAS) --- */
+/* Esto hace que las cajas grandes sean invisibles y solo se vean los ramos */
+[data-theme="bw"] main, [data-theme="blueprint"] main, [data-theme="glitch"] main,
+[data-theme="bw"] #capture-area, [data-theme="blueprint"] #capture-area, [data-theme="glitch"] #capture-area,
+[data-theme="bw"] footer, [data-theme="blueprint"] footer, [data-theme="glitch"] footer {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* ========================================= */
+/* --- TEMA 7: BLACK & WHITE (Corregido) --- */
+/* ========================================= */
+
+/* 1. Base: Fondo y Texto */
+[data-theme="bw"] body { 
+    background-color: #ffffff !important; 
+    color: #000000 !important;
+    /* Textura de puntos muy sutil para que no sea blanco clínico */
+    background-image: radial-gradient(#d4d4d4 1px, transparent 1px) !important;
+    background-size: 20px 20px !important; 
+}
+
+/* Inversión en Modo Oscuro */
+html.dark[data-theme="bw"] body { 
+    background-color: #000000 !important; 
+    color: #ffffff !important; 
+    background-image: radial-gradient(#333333 1px, transparent 1px) !important;
+}
+
+/* 2. Tarjetas y Modales (SOLIDOS, NO TRANSPARENTES) */
+[data-theme="bw"] .bg-white, 
+[data-theme="bw"] .dark\:bg-gray-800,
+[data-theme="bw"] div[id*="modal"] > div {
+    background-color: #ffffff !important; /* Fondo sólido blanco */
+    border: 2px solid #000000 !important; /* Borde más fino (2px) */
+    border-radius: 6px !important;        /* Un radio pequeño para suavizar */
+    box-shadow: 3px 3px 0px #000000 !important; /* Sombra sutil (3px) */
+}
+
+/* Tarjetas en Modo Oscuro */
+html.dark[data-theme="bw"] .bg-white, 
+html.dark[data-theme="bw"] .dark\:bg-gray-800,
+html.dark[data-theme="bw"] div[id*="modal"] > div {
+    background-color: #0a0a0a !important; /* Negro casi puro */
+    border-color: #ffffff !important;
+    box-shadow: 3px 3px 0px #ffffff !important;
+}
+
+/* 3. Botones de Acción (Examen, Escala, Temas) */
+[data-theme="bw"] #action-buttons button {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
+    border-radius: 4px !important;
+    box-shadow: 2px 2px 0px #000000 !important; /* Sombra pequeña */
+    font-weight: 700 !important;
+    transition: all 0.1s ease !important;
+}
+
+/* Hover de Botones: Efecto "Click" */
+[data-theme="bw"] #action-buttons button:hover {
+    transform: translate(1px, 1px) !important; /* Se hunde un poco */
+    box-shadow: 1px 1px 0px #000000 !important; /* La sombra se achica */
+    background-color: #f0f0f0 !important;
+}
+
+/* Botones en Modo Oscuro */
+html.dark[data-theme="bw"] #action-buttons button {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+    box-shadow: 2px 2px 0px #ffffff !important;
+}
+html.dark[data-theme="bw"] #action-buttons button:hover {
+    background-color: #262626 !important;
+    box-shadow: 1px 1px 0px #ffffff !important;
+}
+
+/* 4. Inputs (Títulos y Notas) */
+[data-theme="bw"] input {
+    accent-color: currentColor !important; /* Para checkboxes/radios si hubiera */
+}
+
+/* Título de Ramo Flotante */
+[data-theme="bw"] input.font-bold {
+    border-bottom: 2px solid currentColor !important;
+    color: currentColor !important;
+}
+
+/* Inputs de Notas (Cajas) */
+[data-theme="bw"] input.grade-input,
+[data-theme="bw"] input.weight-input {
+    background-color: transparent !important;
+    border: 1px solid currentColor !important;
+    border-radius: 4px !important;
+}
+
+/* 5. Asegurar que el fondo principal siga limpio */
+[data-theme="bw"] main, 
+[data-theme="bw"] #capture-area, 
+[data-theme="bw"] footer {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* ========================================= */
+/* --- TEMA 8: BLUEPRINT (Final & Sólido) --- */
+/* ========================================= */
+
+/* 1. FONDO Y COLORES BASE */
+[data-theme="blueprint"] body {
+    background-color: #083344 !important; /* Azul oscuro profundo */
+    color: #a5f3fc !important; /* Cian claro */
+    
+    /* Fondo de cuadrícula técnica */
+    background-image: 
+        linear-gradient(rgba(165, 243, 252, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(165, 243, 252, 0.1) 1px, transparent 1px) !important;
+    background-size: 20px 20px !important;
+}
+
+/* 2. TARJETAS, MODALES Y MENÚS (Ahora más sólidos) */
+[data-theme="blueprint"] .bg-white, 
+[data-theme="blueprint"] .dark\:bg-gray-800,
+[data-theme="blueprint"] div[id*="modal"] > div,
+[data-theme="blueprint"] div[id*="magic-menu"] {
+    /* Fondo casi sólido (95%) para evitar problemas de lectura */
+    background-color: rgba(8, 51, 68, 0.95) !important;
+    
+    /* Borde punteado característico */
+    border: 1px dashed #a5f3fc !important; 
+    border-radius: 4px !important; /* Bordes técnicos (poco radio) */
+    
+    /* Sombra plana sutil */
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 3. CABECERA Y LOGO (Sin mover nada, solo color) */
+[data-theme="blueprint"] h1 {
+    color: #a5f3fc !important;
+}
+
+[data-theme="blueprint"] h1 svg {
+    color: #a5f3fc !important;
+    fill: currentColor !important;
+    /* Sin rotaciones ni filtros extraños */
+}
+
+[data-theme="blueprint"] #capture-area p {
+    color: #67e8f9 !important; /* Cian un poco más oscuro para subtítulo */
+    opacity: 0.9;
+}
+
+/* 4. INPUTS Y TEXTOS (Ramos) */
+[data-theme="blueprint"] input.font-bold {
+    color: #a5f3fc !important;
+    border-bottom: 1px dashed rgba(165, 243, 252, 0.5) !important;
+}
+
+/* 5. BOTONES DE ACCIÓN (Examen / Escala) */
+[data-theme="blueprint"] #action-buttons button[onclick*="open"] {
+    background-color: rgba(8, 51, 68, 1) !important; /* Fondo sólido */
+    color: #a5f3fc !important;
+    border: 1px dashed #a5f3fc !important;
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="blueprint"] #action-buttons button[onclick*="open"]:hover {
+    background-color: #a5f3fc !important; /* Inversión al pasar el mouse */
+    color: #083344 !important;
+    border-style: solid !important;
+}
+
+/* 6. FOOTER (Colores Específicos) */
+
+/* El Logo del Footer (asumiendo que está dentro de un link o div en el footer) */
+[data-theme="blueprint"] footer svg {
+    color: #a5f3fc !important;
+}
+
+/* Link: "Sugerencias y errores" (Contact Modal) */
+[data-theme="blueprint"] footer button[onclick*="toggleContactModal"] {
+    color: #a5f3fc !important;
+}
+/* ========================================= */
+/* --- TEMA 9: SYSTEM ERROR (Glitch) ---     */
+/* ========================================= */
+[data-theme="glitch"] body {
+    background-color: #000000 !important;
+    color: #22c55e !important; /* Verde hacker */
+    /* Líneas de escaneo TV antigua */
+    background-image: repeating-linear-gradient(0deg, rgba(0, 255, 0, 0.05), rgba(0, 255, 0, 0.05) 1px, transparent 1px, transparent 2px) !important;
+}
+
+[data-theme="glitch"] .bg-white, [data-theme="glitch"] .dark\:bg-gray-800 {
+    background-color: #000000 !important; /* Fondo negro sólido para legibilidad */
+    border: 1px solid #22c55e !important;
+    /* Sombra con efecto 3D rojo/azul (Glitch) */
+    box-shadow: 3px 0px 0px #ff0000, -3px 0px 0px #0000ff !important;
+    border-radius: 0 !important;
+}
+
+[data-theme="glitch"] input.font-bold {
+    color: #22c55e !important;
+    text-shadow: 2px 0 #ff0000, -2px 0 #0000ff !important;
+}
+
+/* 1. EL LOGO (SVG): Verde con sombra dura de colores */
+[data-theme="glitch"] h1 svg {
+    color: #22c55e !important; /* Verde Hacker */
+    /* Sombra sólida: Roja a la izquierda, Azul a la derecha. Sin difuminar (0px blur) */
+    filter: drop-shadow(-2px 0px 0px rgba(255, 0, 0, 0.7)) 
+            drop-shadow(2px 0px 0px rgba(0, 0, 255, 0.7)) !important;
+    animation: none !important; /* Aseguramos que NO se mueva */
+}
+
+/* 2. EL TÍTULO "MIS RAMOS": Blanco con sombra de texto desfasa */
+[data-theme="glitch"] h1 {
+    color: #ffffff !important;
+    /* Efecto de aberración cromática en el texto */
+    text-shadow: 2px 0 #ff0000, -2px 0 #0000ff !important;
+    font-family: 'Courier New', monospace !important; /* Tipografía técnica simple */
+    letter-spacing: -1px !important; /* Letras un poco más juntas */
+}
+
+/* 3. EL SUBTÍTULO: Simple, verde y tipo código */
+[data-theme="glitch"] h1 + p {
+    color: #22c55e !important;
+    font-family: 'Courier New', monospace !important;
+    font-size: 0.85rem !important;
+    /* Quitamos cualquier contenido extra que puse antes */
+}
+
+/* Apuntamos específicamente a los botones de Examen y Escala en el tema Glitch */
+[data-theme="glitch"] #action-buttons button[onclick*="openExam"],
+[data-theme="glitch"] #action-buttons button[onclick*="openScale"] {
+    background-color: #000000 !important;
+    color: #22c55e !important; /* Texto Verde Hacker */
+    
+    /* Borde grueso para que parezcan botones físicos de interfaz antigua */
+    border: 2px solid #22c55e !important; 
+    border-radius: 4px !important; /* Bordes un poco más rectos (técnicos) */
+    /* Sombra sólida desplazada (Efecto Bloque) */
+    box-shadow: 4px 4px 0px rgba(34, 197, 94, 0.4) !important;
+    
+    transition: all 0.1s steps(2) !important; /* Animación "robótica" */
+}
+
+/* EFECTO HOVER: Inversión de colores (Alto Contraste) */
+[data-theme="glitch"] #action-buttons button[onclick*="openExam"]:hover,
+[data-theme="glitch"] #action-buttons button[onclick*="openScale"]:hover {
+    background-color: #22c55e !important; /* Fondo Verde */
+    color: #000000 !important;             /* Texto Negro */
+    
+    /* La sombra se vuelve negra para resaltar el bloque verde */
+    box-shadow: 2px 2px 0px #000000, 4px 4px 0px rgba(255, 255, 255, 0.2) !important;
+    transform: translate(2px, 2px) !important; /* Se hunde al presionar */
+}
+
+/* Ajuste de los iconos dentro de los botones */
+[data-theme="glitch"] #action-buttons button[onclick*="openExam"] svg,
+[data-theme="glitch"] #action-buttons button[onclick*="openScale"] svg {
+    stroke-width: 2.5px !important; /* Iconos más gruesos */
+}
+
+/* 1. Logo del Footer */
+[data-theme="glitch"] footer svg {
+    color: #22c55e !important;
+    filter: drop-shadow(2px 0px 0px rgba(255, 0, 0, 0.5)) !important; /* Mini efecto glitch */
+}
+
+/* 2. Link: "Sugerencias y errores" */
+[data-theme="glitch"] footer button[onclick*="toggleContactModal"] {
+    color: #22c55e !important;
+    font-family: 'Fira Code', monospace !important; /* Mantiene la estética de código */
+    text-shadow: 1px 0px 0px rgba(255, 0, 0, 0.3) !important;
+}
+
+/* ========================================================= */
+/* --- VITRINA DE TROFEOS: ANIMACIONES DE BOTONES GACHA --- */
+/* ========================================================= */
+/* 1. ESPRESSO ☕ (Efecto: Se levanta suavemente como vapor) */
+#btn-theme-coffee {
+    border: none !important;
+    background-color: #3e2723 !important;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    box-shadow: 0 2px 5px rgba(62, 39, 35, 0.5) !important;
+}
+#btn-theme-coffee:hover {
+    transform: translateY(-4px) !important;
+    background-color: #4e342e !important;
+    box-shadow: 0 10px 20px rgba(62, 39, 35, 0.3) !important;
+}
+#btn-theme-coffee:hover svg {
+    filter: drop-shadow(0 0 5px #fff8e1); /* Resplandor cálido en la estrella */
+    color: #fff8e1 !important;
+}
+
+/* 2. RETRO BIT 👾 (Efecto: Hundirse mecánico + Sombra pixelada) */
+#btn-theme-retro {
+    border: 2px solid #33ff33 !important;
+    background-color: #000 !important;
+    box-shadow: 4px 4px 0px #005500 !important; /* Sombra dura */
+    border-radius: 0 !important; /* Cuadrado perfecto */
+    transition: all 0.1s steps(2) !important; /* Movimiento robótico */
+}
+#btn-theme-retro:hover {
+    transform: translate(2px, 2px) !important; /* Se hunde físicamente */
+    box-shadow: 2px 2px 0px #005500 !important; /* La sombra se achica */
+    background-color: #002200 !important;
+}
+
+/* 3. NEON NIGHTS 🔮 (Efecto: Pulso de Neón) */
+#btn-theme-neon {
+    border: 2px solid #00f2ff !important;
+    background-color: #1a0b2e !important;
+    box-shadow: 0 0 5px #00f2ff, inset 0 0 5px #d946ef !important;
+    transition: all 0.3s ease !important;
+}
+#btn-theme-neon:hover {
+    box-shadow: 0 0 15px #00f2ff, 0 0 30px #d946ef !important;
+    border-color: white !important;
+    transform: scale(1.05) !important;
+}
+#btn-theme-neon:hover svg {
+    filter: drop-shadow(0 0 3px #fff);
+}
+
+/* 4. VAPORWAVE 🌴 (Efecto: Inclinación + Degradado) */
+#btn-theme-vaporwave {
+    background: linear-gradient(to right, #ff71ce, #01cdfe) !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+    background-size: 200% 200% !important;
+}
+#btn-theme-vaporwave:hover {
+    background-position: right center !important; /* Mueve el degradado */
+    transform: skew(-5deg) scale(1.05) !important; /* Se inclina estilo itálica ochentera */
+    box-shadow: -3px 3px 0 rgba(185, 103, 255, 0.5) !important;
+}
+
+/* 5. FOREST ZEN 🌿 (Efecto: Orgánico/Crecimiento) */
+#btn-theme-forest {
+    border: 1px solid #a7c080 !important;
+    background-color: #2d353b !important;
+    border-radius: 8px !important;
+    transition: all 0.4s ease !important;
+}
+#btn-theme-forest:hover {
+    border-radius: 16px 4px 16px 4px !important; /* Se vuelve forma de hoja */
+    background-color: #343f44 !important;
+    border-color: #d3c6aa !important;
+    transform: rotate(3deg) scale(1.05) !important;
+}
+
+/* 6. LUXURY GOLD 💍 (Efecto: Brillo Metálico) */
+#btn-theme-luxury {
+    border: 1px solid #d4af37 !important;
+    background: linear-gradient(145deg, #0a0a0a, #1a1a1a) !important;
+    position: relative;
+    overflow: hidden !important;
+}
+/* El brillo que pasa por encima */
+#btn-theme-luxury::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(to right, transparent, rgba(212, 175, 55, 0.4), transparent);
+    transform: skewX(-25deg);
+    transition: 0.5s;
+}
+#btn-theme-luxury:hover::after {
+    left: 150%; /* El brillo cruza el botón */
+    transition: 0.7s ease-in-out;
+}
+#btn-theme-luxury:hover {
+    border-color: #fff !important;
+    box-shadow: 0 0 10px #d4af37 !important;
+}
+
+/* 7. BLACK & WHITE 🏁 (Efecto: Pop Art / Salto) */
+#btn-theme-bw {
+    background-color: #fff !important;
+    border: 2px solid #000 !important;
+    border-radius: 0 !important;
+    box-shadow: 3px 3px 0 #000 !important;
+    transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+#btn-theme-bw:hover {
+    transform: translate(-2px, -2px) !important; /* Salta hacia el usuario */
+    box-shadow: 5px 5px 0 #000 !important; /* Sombra crece */
+}
+#btn-theme-bw svg { fill: #000 !important; }
+
+/* 8. BLUEPRINT 📐 (Corregido: Engranaje técnico) */
+#btn-theme-blueprint {
+    background-color: #083344 !important;
+    border: 1px dashed #a5f3fc !important; /* Borde punteado */
+    transition: all 0.3s ease !important;
+}
+#btn-theme-blueprint:hover {
+    background-color: #0e455a !important;
+    border-color: #fff !important;
+    letter-spacing: 1px; /* El texto se expande un poco */
+}
+
+#btn-theme-blueprint:hover svg {
+    /* AQUÍ ESTABA EL ERROR: */
+    /* Debemos mantener el translate(-50%, -50%) para que no pierda el centro al girar */
+    transform: translate(-50%, -50%) rotate(90deg) scale(1.2) !important;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+/* 9. GLITCH (SYSTEM ERROR) ⚠️ (Tu diseño RGB mejorado) */
+#btn-theme-glitch {
+    border: none !important;
+    background-color: #000000 !important;
+    border-radius: 6px !important;
+    box-shadow: -2px -2px 0 rgba(255,0,0,0.8), 2px 2px 0 rgba(0,0,255,0.8) !important;
+    transition: transform 0.1s ease !important;
+}
+#btn-theme-glitch:hover {
+    transform: translate(2px, -2px) !important;
+    box-shadow: -3px 2px 0 rgba(255,0,0,1), 3px -1px 0 rgba(0,0,255,1), -1px -3px 0 rgba(0,255,0,1) !important;
+}
+#btn-theme-glitch svg {
+    fill: #22c55e !important;
+    filter: drop-shadow(-2px 0 0 rgba(255,0,0,0.7));
+}
+
+/* --- ESTADO ACTIVO (Cuando el tema está seleccionado) --- */
+/* Cada botón seleccionado brilla en su propio color */
+#special-themes-grid button[style*="border"]:focus,
+#special-themes-grid button.border-primary-500 {
+    animation: pulseSelected 2s infinite;
+}
+
+@keyframes pulseSelected {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); opacity: 0.8; }
+    100% { transform: scale(1); }
+}
+/* ========================================================= */
+
+/* Definimos la secuencia del latido (dos pulsos rápidos y una pausa) */
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    14% { transform: scale(1.15); } /* Primer bum */
+    28% { transform: scale(1); }
+    42% { transform: scale(1.15); } /* Segundo bum */
+    70% { transform: scale(1); } /* Pausa larga... */
+}
+
+/* Aplicamos la animación al nuevo botón del corazón */
+footer button[onclick*="openStoryModal"] {
+    /* Usamos 2.5s para un ritmo tranquilo y "ease-in-out" para suavidad */
+    animation: heartbeat 2.5s infinite ease-in-out;
+}
+
+/* Opcional: Al pasar el mouse, pausamos el latido para que no pelee 
+   con el efecto de hover (scale-125) que ya tienes en Tailwind */
+footer button[onclick*="openStoryModal"]:hover {
+    animation-play-state: paused;
+}
+
+/* --- BLOQUE FALTANTE: ANTI-ZOOM IPHONE --- */
+@media screen and (max-width: 768px) {
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+}
+/* ======================================================= */
+/* --- BLINDAJE NUCLEAR KO-FI (ANTI-RETRO TOTAL) ---       */
+/* ======================================================= */
+
+/* 1. RESETEO TOTAL: Ataca a CADA elemento dentro de la caja */
+#kofi-static-box,
+#kofi-static-box * {
+    font-family: 'Inter', system-ui, sans-serif !important; /* Fuerza fuente normal */
+    text-shadow: none !important; /* Elimina brillo neón */
+    letter-spacing: normal !important; /* Elimina espaciado retro */
+    box-shadow: none !important; /* Elimina bordes brillantes */
+    border-radius: 0; /* Reset base (luego lo ajustamos) */
+}
+
+/* 2. LA CAJA (Contenedor) */
+#kofi-static-box {
+    background-color: #fffbeb !important; /* Fondo Crema */
+    border: 1px solid #fde68a !important; /* Borde Dorado */
+    border-radius: 0.75rem !important; /* Redondeado bonito */
+    padding: 1rem !important;
+    margin-top: 1rem !important;
+}
+
+/* 3. LOS TEXTOS (Aquí ganamos al verde del Retro) */
+/* Forzamos el color gris oscuro en párrafos y cualquier texto suelto */
+#kofi-static-box p,
+#kofi-static-box span,
+#kofi-static-box div {
+    color: #4b5563 !important; /* Gris oscuro SIEMPRE */
+    font-weight: 400 !important;
+}
+
+/* 4. LAS NEGRITAS (Naranja) */
+#kofi-static-box strong {
+    color: #d97706 !important;
+    font-weight: 700 !important;
+}
+
+/* 5. EL BOTÓN (Fondo Naranja) */
+#kofi-static-box a {
+    background-color: #f59e0b !important;
+    border-radius: 9999px !important; /* Redondo completo */
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.625rem 1.25rem !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    
+    /* Importante: El botón no debe tener el texto gris del paso 3 */
+    color: #ffffff !important; 
+}
+
+/* 6. DENTRO DEL BOTÓN (Texto e Icono BLANCOS) */
+/* Esto arregla el "Invítame un café" que se veía mal */
+#kofi-static-box a span,
+#kofi-static-box a svg,
+#kofi-static-box a path,
+#kofi-static-box a line {
+    color: #ffffff !important; /* Blanco Puro */
+    stroke: #ffffff !important; /* Para las líneas del icono */
+    fill: none !important;
+    font-weight: 700 !important;
+}
+
+/* 7. EFECTO HOVER DEL BOTÓN */
+#kofi-static-box a:hover {
+    background-color: #d97706 !important;
+    transform: translateY(-2px) !important;
+}

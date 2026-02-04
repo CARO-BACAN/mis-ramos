@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Calcular Promedio con Porcentaje y Notas | Mis Ramos</title>
+    <meta name="description" content="Calculadora de notas para estudiantes: calcular promedio con porcentaje, ponderaciones y nota de examen de forma fácil. Gestiona tus asignaturas y simula tus promedios en tiempo real con escala de notas personalizada.">
+    <meta name="theme-color" content="#f9fafb" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="IMG/calculadora-notas-promedio.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Inter:wght@300..700&family=Mali:wght@300..700&family=Merriweather:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        // La configuración va AQUÍ, cuando 'tailwind' ya existe
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: 'rgb(var(--primary-50) / <alpha-value>)',
+                            100: 'rgb(var(--primary-100) / <alpha-value>)',
+                            200: 'rgb(var(--primary-200) / <alpha-value>)',
+                            500: 'rgb(var(--primary-500) / <alpha-value>)',
+                            600: 'rgb(var(--primary-600) / <alpha-value>)',
+                            700: 'rgb(var(--primary-700) / <alpha-value>)',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                        hand: ['Mali', 'cursive'],
+                        mono: ['Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-100 relative transition-colors duration-300 flex flex-col">
+    <input type="file" id="import-file" accept=".json" class="hidden" onchange="importBackup(event)">
+
+    <main id="capture-area" class="max-w-7xl mx-auto px-6 py-4 md:p-8 bg-gray-100 dark:bg-gray-900 transition-colors duration-300 flex-1 w-full">
+        <div class="bg-white dark:bg-gray-800 p-3 md:p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-4 flex flex-col xl:flex-row justify-between items-center xl:items-start gap-3 md:gap-6 xl:gap-4 relative overflow-hidden transition-colors duration-300">
+    
+    <div id="save-indicator" class="absolute top-0 left-0 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-[10px] px-2 py-0.5 rounded-br-lg flex items-center gap-1 opacity-0 transition-opacity duration-500 z-10">
+        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Guardado
+    </div>
+
+    <div class="flex flex-col gap-2 w-full xl:w-auto text-center xl:text-left items-center xl:items-start">
+        <div class="pt-0">
+            <h1 class="text-xl md:text-3xl xl:text-2xl font-bold text-gray-800 dark:text-white flex items-center justify-center xl:justify-start gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="340 0 1140 1024" class="h-7 w-auto md:h-10 text-primary-600 dark:text-primary-500 transition-colors duration-300" aria-hidden="true">
+                    <title>Calculadora de Notas Mis Ramos - Inicio</title>
+                    <path fill="currentColor" d="M1303.929 754.923c.175-.242.29-.527.345-.82l8.494-45.111 3.133-16.063a2.034 2.034 0 0 0-1.996-2.424l-62.428-.013c-.983 0-1.825.701-2.001 1.668q-5.73 31.256-11.456 62.515a2.034 2.034 0 0 0 1.992 2.4l60.553.254c.29 0 .585-.046.848-.17.987-.467 1.788-1.234 2.516-2.236m-118.675-.24 11.716-61.778a2.034 2.034 0 0 0-1.998-2.413l-45.482.008a2.035 2.035 0 0 0-2.033 2.035l-.007 62.614c0 1.143.943 2.062 2.086 2.034l33.772-.846a2.03 2.03 0 0 0 1.946-1.654m136.582-95.351 11.886-62.821a2.035 2.035 0 0 0-1.993-2.414l-61.795-.162a2.034 2.034 0 0 0-2.004 1.656l-11.91 62.809a2.035 2.035 0 0 0 1.994 2.413l61.818.175a2.034 2.034 0 0 0 2.004-1.656m-118.582-.116 11.839-63.843a2.033 2.033 0 0 0-2-2.404h-64.172c-1.13 0-2.044.922-2.033 2.052l.582 63.843a2.034 2.034 0 0 0 2.034 2.016h51.75c.98 0 1.822-.7 2-1.664m129.512-117.179a13.86 13.86 0 0 0 13.627-11.314l10.772-57.71c1.101-5.902-2.835-10.381-8.477-11.14a2.4 2.4 0 0 0-.326-.021l-191.161.06q-.239 0-.47.048c-4.753 1.035-9.15 4.312-9.153 9.485l-.02 60.675c-.001 4.11 3.359 9.87 8.163 9.87zm-305.273-77.416 32.87-53.873a2.04 2.04 0 0 1 1.737-.975l316.493.002c4.996 0 9.597 1.565 13.91 3.082 17.403 6.119 24.03 24.642 20.7 42.286l-48.087 254.662-9.464 49.938c-1.815 9.572-5.64 17.569-11.287 25.44-10.995 14.106-27.164 24.708-45.892 24.713l-201.99.064a2.034 2.034 0 0 1-2.034-2.035l-.007-240.674v-.063c-.01-2.019-2.717-2.713-3.77-.992l-23.546 38.513-95.433 154.914a2.04 2.04 0 0 1-1.733.966l-58.572-.024c-.706 0-1.36-.365-1.731-.965L788.778 563.983c-.865-1.4-2.95-1.246-3.6.266l-11.417 26.602-52.89 129.74-35.837 88.073a2.04 2.04 0 0 1-1.892 1.267l-87.376-.308c-32.242-.115-57.045-28.002-58.778-59.764a3 3 0 0 1-.004-.147l.014-269.525.09-226.763c.012-31.167 25.816-62.55 57.873-62.697l199.67-.922c12.713-.058 23.077 4.899 31.703 13.472l43.578 43.304 16.433 16.01c.379.37.888.577 1.419.578l383.816.046c12.974.002 24.422 5.532 34.38 12.677q.085.061.165.13c13.87 11.689 23.596 27.46 23.712 46.029l.376 61.022a2.033 2.033 0 0 1-2.033 2.047l-71.747.025a2.033 2.033 0 0 1-2.033-1.99l-.331-15.538c.037-13.334-11.155-28.61-26.473-28.61l-587.85.002c-14.372 0-26.85 14.354-26.852 28.224l-.05 246.35c0 2.324 3.269 2.832 3.973.617l19.799-62.232 21.372-67.83 8.704-28.086c4.944-15.955 15.173-29.321 29.305-38.015 9.681-5.322 19.423-8.208 30.637-8.208l92.347-.008c.705 0 1.361.366 1.732.967l43.827 71.173 54.01 87.963 20.607 33.2c.799 1.287 2.672 1.281 3.463-.01z"/></svg> 
+                Mis Ramos
+            </h1>
+            <p class="text-gray-600 dark:text-gray-400 text-xs md:text-sm mt-1 max-w-md mx-auto xl:mx-0 leading-tight">
+    Gestiona tus asignaturas y simula tus promedios en tiempo real.
+</p>
+        </div>
+        
+        <div id="action-buttons" class="flex flex-wrap justify-center xl:justify-start gap-1.5 w-full mt-1">
+            <button onclick="toggleModal('theme-modal', true)" class="flex-1 min-w-[95px] md:flex-none flex items-center justify-center gap-1.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 px-2 py-2 md:px-3 md:py-2 rounded-lg transition-colors shadow-sm text-[10px] md:text-sm font-medium touch-manipulation" title="Personalizar Temas" aria-label="Personalizar Temas">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="md:w-4 md:h-4"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+                <span>Temas</span>
+            </button>
+
+            <button onclick="openExamCalculator()" class="flex-1 min-w-[95px] md:flex-none flex items-center justify-center gap-1.5 bg-primary-50 dark:bg-primary-900/30 hover:bg-primary-100 dark:hover:bg-primary-900/50 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800 px-2 py-2 md:px-3 md:py-2 rounded-lg transition-colors shadow-sm text-[10px] md:text-sm font-medium touch-manipulation" title="Calcular Examen" aria-label="Calcular nota de examen">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="md:w-4 md:h-4"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+                <span>Examen</span>
+            </button>
+
+            <button onclick="openScaleModal()" class="flex-1 min-w-[95px] md:flex-none flex items-center justify-center gap-1.5 bg-primary-50 dark:bg-primary-900/30 hover:bg-primary-100 dark:hover:bg-primary-900/50 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800 px-2 py-2 md:px-3 md:py-2 rounded-lg transition-colors shadow-sm text-[10px] md:text-sm font-medium touch-manipulation" title="Escala de Notas" aria-label="Transformar Nota">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="md:w-4 md:h-4"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+                <span>Escala</span>
+            </button>
+
+            <div class="flex flex-1 md:flex-none gap-2 items-center">
+    
+    <button type="button" 
+            onclick="exportBackup()" 
+            aria-label="Exportar respaldo de notas a un archivo JSON" 
+            title="Exportar Respaldo"
+            class="flex-1 md:flex-none flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-2 rounded-lg transition-colors shadow-sm touch-manipulation hover:bg-gray-50 dark:hover:bg-gray-700">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="md:w-4 md:h-4" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+
+    <button type="button" 
+            onclick="triggerImport()" 
+            aria-label="Cargar respaldo de notas desde un archivo JSON" 
+            title="Importar Respaldo"
+            class="flex-1 md:flex-none flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-2 rounded-lg transition-colors shadow-sm touch-manipulation hover:bg-gray-50 dark:hover:bg-gray-700">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="md:w-4 md:h-4" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    </button>
+
+    <button type="button" 
+            onclick="clearAllData()" 
+            aria-label="Borrar todos los datos y notas permanentemente" 
+            title="Borrar Todo"
+            class="ml-4 flex-1 md:flex-none flex items-center justify-center bg-white dark:bg-gray-800 text-red-600 border border-gray-200 dark:border-gray-700 px-2 py-2 rounded-lg transition-colors shadow-sm touch-manipulation hover:bg-red-50 dark:hover:bg-red-900/20">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="md:w-4 md:h-4" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+    </button>
+</div>
+        </div>
+    </div>
+
+    <div id="semester-display-container" class="flex-shrink-0 flex items-center gap-3 bg-primary-50 dark:bg-gray-800 px-4 py-2.5 md:px-6 md:py-4 rounded-xl border border-primary-200 dark:border-gray-600 shadow-sm mt-1 xl:mt-0 w-full xl:w-auto justify-center xl:justify-start transition-colors duration-300">
+    <span class="text-primary-700 dark:text-primary-400 font-bold text-xs uppercase tracking-wide">Promedio Final</span>
+    <div class="flex items-baseline gap-2 semester-numbers">
+        <span id="sem-exact" class="text-base text-gray-600 dark:text-gray-400 font-medium">-</span>
+        <span class="text-gray-300 dark:text-gray-600 text-[10px]">➜</span>
+        <span id="sem-rounded" class="text-4xl md:text-5xl font-black text-gray-400 dark:text-gray-600">-</span>
+    </div>
+</div>
+</div>
+
+        <div id="subjects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-start">
+    </div>
+        
+        <div class="flex flex-wrap justify-center items-center gap-2 md:gap-3 mt-4 mb-2">
+            
+            <button onclick="addSubject()" class="flex-1 md:flex-none flex items-center justify-center gap-1.5 md:gap-2 bg-primary-50 dark:bg-gray-800 hover:bg-primary-100 dark:hover:bg-gray-700 text-primary-700 dark:text-gray-200 border border-primary-200 dark:border-gray-700 px-4 py-2 rounded-lg transition-colors shadow-sm text-sm font-bold touch-manipulation" title="Agregar Ramo (Máximo 8)" aria-label="Agregar Ramo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                <span>Agregar Ramo</span>
+            </button>
+            
+            <button onclick="removeSubject()" class="flex-none flex items-center justify-center gap-1.5 md:gap-2 bg-white dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 border border-gray-200 dark:border-gray-700 hover:border-red-200 px-4 py-2 rounded-lg transition-colors shadow-sm text-sm font-medium touch-manipulation" title="Quitar Último Ramo (Mínimo 4)" aria-label="Quitar Último Ramo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </button>
+
+            <button onclick="openManageModal()" class="w-full md:w-auto flex items-center justify-center gap-1.5 md:gap-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-gray-300 px-4 py-2 rounded-lg transition-colors shadow-sm text-sm font-medium touch-manipulation" title="Gestionar y Ordenar Ramos" aria-label="Gestionar y Ordenar Ramos">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                <span>Ordenar</span>
+            </button>
+
+            <button onclick="exportAsImage()" class="w-full md:w-auto flex items-center justify-center gap-1.5 md:gap-2 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800 px-4 py-2 rounded-lg transition-colors shadow-sm text-sm font-bold touch-manipulation" title="Exportar Resumen como Imagen" aria-label="Exportar Imagen">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                <span>Descargar Imagen</span>
+            </button>
+        </div>
+
+        
+        
+        <div class="mt-8 text-center text-gray-600 dark:text-gray-400 text-xs pb-1">
+    * Escala chilena (10-70). Tus cambios se guardan automáticamente.
+</div>
+</main>
+
+    <div id="theme-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center md:items-start md:justify-start p-4 backdrop-blur-sm transition-opacity">
+    
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-72 md:w-64 md:mt-32 md:ml-12 border border-gray-200 dark:border-gray-700 animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]">
+        
+        <div class="flex justify-between items-center p-4 border-b border-gray-100 dark:border-gray-700 flex-shrink-0">
+            <h2 class="font-bold text-gray-800 dark:text-white text-lg">Personalizar</h2>
+            <button onclick="toggleModal('theme-modal', false)" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" aria-label="Cerrar personalización">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <div class="p-4 overflow-y-auto flex-1">
+            
+            <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-100 dark:border-gray-700">
+                <span class="text-sm text-gray-600 dark:text-gray-300 font-medium">Modo Oscuro</span>
+                <button onclick="toggleDarkMode()" id="dark-mode-toggle" class="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 dark:bg-primary-600 transition-colors" aria-label="Activar modo oscuro">
+                    <span class="sr-only">Activar modo oscuro</span>
+                    <span class="inline-block h-4 w-4 transform rounded-full bg-white transition translate-x-1 dark:translate-x-6"></span>
+                </button>
+            </div>
+
+            <p class="text-xs font-bold text-gray-400 dark:text-gray-500 mb-2 uppercase tracking-wider">Color Principal</p>
+            <div class="grid grid-cols-3 gap-2 mb-2">
+                <button onclick="setTheme('blue')" class="h-8 w-full rounded-md bg-blue-500 hover:ring-2 ring-offset-1 ring-blue-500 transition-all dark:ring-offset-gray-800" title="Azul" aria-label="Tema Azul"></button>
+                <button onclick="setTheme('pink')" class="h-8 w-full rounded-md bg-pink-500 hover:ring-2 ring-offset-1 ring-pink-500 transition-all dark:ring-offset-gray-800" title="Rosa" aria-label="Tema Rosa"></button>
+                <button onclick="setTheme('orange')" class="h-8 w-full rounded-md bg-orange-500 hover:ring-2 ring-offset-1 ring-orange-500 transition-all dark:ring-offset-gray-800" title="Naranjo" aria-label="Tema Naranjo"></button>
+                <button onclick="setTheme('purple')" class="h-8 w-full rounded-md bg-purple-500 hover:ring-2 ring-offset-1 ring-purple-500 transition-all dark:ring-offset-gray-800" title="Morado" aria-label="Tema Morado"></button>
+                <button onclick="setTheme('green')" class="h-8 w-full rounded-md bg-green-500 hover:ring-2 ring-offset-1 ring-green-500 transition-all dark:ring-offset-gray-800" title="Verde" aria-label="Tema Verde"></button>
+                <button onclick="setTheme('red')" class="h-8 w-full rounded-md bg-red-500 hover:ring-2 ring-offset-1 ring-red-500 transition-all dark:ring-offset-gray-800" title="Rojo" aria-label="Tema Rojo"></button>
+                <button onclick="setTheme('teal')" class="h-8 w-full rounded-md bg-teal-500 hover:ring-2 ring-offset-1 ring-teal-500 transition-all dark:ring-offset-gray-800" title="Turquesa" aria-label="Tema Turquesa"></button>
+                <button onclick="setTheme('yellow')" class="h-8 w-full rounded-md bg-yellow-500 hover:ring-2 ring-offset-1 ring-yellow-500 transition-all dark:ring-offset-gray-800" title="Amarillo" aria-label="Tema Amarillo"></button>
+                <button onclick="setTheme('indigo')" class="h-8 w-full rounded-md bg-indigo-500 hover:ring-2 ring-offset-1 ring-indigo-500 transition-all dark:ring-offset-gray-800" title="Índigo" aria-label="Tema Índigo"></button>
+            </div>
+
+            <p class="text-xs font-bold text-gray-400 dark:text-gray-500 mb-2 mt-6 uppercase tracking-wider border-t border-gray-100 dark:border-gray-700 pt-4">Tipografía</p>
+            <div class="space-y-2 pb-2">
+                
+                <button onclick="setFont('sans')" id="btn-font-sans" class="w-full flex items-center justify-between p-2.5 border rounded-lg transition-all group font-sans bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-primary-400 dark:hover:border-primary-400">
+                    <span class="text-sm">Inter (Moderno)</span>
+                    <svg class="w-4 h-4 text-primary-600 dark:text-primary-400 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+
+                <button onclick="setFont('serif')" id="btn-font-serif" class="w-full flex items-center justify-between p-2.5 border rounded-lg transition-all group font-serif bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-primary-400 dark:hover:border-primary-400">
+                    <span class="text-sm">Merriweather (Elegante)</span>
+                    <svg class="w-4 h-4 text-primary-600 dark:text-primary-400 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+
+                <button onclick="setFont('hand')" id="btn-font-hand" class="w-full flex items-center justify-between p-2.5 border rounded-lg transition-all group font-hand bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-primary-400 dark:hover:border-primary-400">
+                    <span class="text-sm">Mali (Creativo)</span>
+                    <svg class="w-4 h-4 text-primary-600 dark:text-primary-400 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+
+                <button onclick="setFont('mono')" id="btn-font-mono" class="w-full flex items-center justify-between p-2.5 border rounded-lg transition-all group font-mono bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-primary-400 dark:hover:border-primary-400">
+                    <span class="text-sm">Fira Code (Técnico)</span>
+                    <svg class="w-4 h-4 text-primary-600 dark:text-primary-400 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div id="scale-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 relative flex flex-col max-h-[90vh] border border-gray-200 dark:border-gray-700">
+            <button onclick="closeScaleModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 z-10" aria-label="Cerrar transformador">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            
+            <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2 flex-shrink-0">
+                <span class="bg-primary-50 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 p-1.5 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+                </span>
+                Transformar Nota
+            </h2>
+
+            <div class="space-y-4 overflow-y-auto flex-1 pr-2">
+                
+                <div class="grid grid-cols-4 gap-2">
+                    <div>
+                        <label for="scale-min" class="block text-[10px] font-bold text-gray-400 uppercase mb-1 text-center">Mín</label>
+                        <input type="number" id="scale-min" value="10" oninput="calculateScaleGrade()" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded p-1.5 text-center text-sm font-semibold dark:text-white">
+                    </div>
+                    <div>
+                        <label for="scale-max" class="block text-[10px] font-bold text-gray-400 uppercase mb-1 text-center">Máx</label>
+                        <input type="number" id="scale-max" value="70" oninput="calculateScaleGrade()" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded p-1.5 text-center text-sm font-semibold dark:text-white">
+                    </div>
+                    <div>
+                        <label for="scale-pass" class="block text-[10px] font-bold text-gray-400 uppercase mb-1 text-center">Aprob</label>
+                        <input type="number" id="scale-pass" value="40" oninput="calculateScaleGrade()" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded p-1.5 text-center text-sm font-semibold text-primary-600 dark:text-primary-400">
+                    </div>
+                    <div>
+                        <label for="scale-demand" class="block text-[10px] font-bold text-gray-400 uppercase mb-1 text-center">Exig.</label>
+                        <div class="relative">
+                            <input type="number" id="scale-demand" value="60" oninput="calculateScaleGrade()" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded p-1.5 text-center text-sm font-semibold dark:text-white">
+                            <span class="absolute right-1 top-1.5 text-gray-400 text-[10px]">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-lg">
+                    <button id="tab-score" onclick="setScaleMode('score')" class="flex-1 py-1.5 text-sm font-medium rounded-md bg-white text-gray-800 shadow-sm transition-all">Puntaje</button>
+                    <button id="tab-percent" onclick="setScaleMode('percent')" class="flex-1 py-1.5 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 transition-all">Porcentaje</button>
+                </div>
+
+                <div id="input-score-container" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Puntaje Máximo</label>
+                        <input type="number" id="input-score-max" placeholder="Ej: 80" oninput="calculateScaleGrade()" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2.5 text-lg font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Tu Puntaje</label>
+                        <input type="number" id="input-score-obtained" placeholder="Ej: 45" oninput="calculateScaleGrade()" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2.5 text-lg font-bold text-primary-600">
+                    </div>
+                </div>
+
+                <div id="input-percent-container" class="hidden">
+                    <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Tu Porcentaje de Logro</label>
+                    <div class="relative">
+                        <input type="number" id="input-percent-val" placeholder="Ej: 75" oninput="calculateScaleGrade()" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2.5 text-lg font-bold text-primary-600">
+                        <span class="absolute right-3 top-3 text-gray-400 font-bold">%</span>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 text-center border border-gray-200 dark:border-gray-600 mt-2 flex flex-col items-center justify-center">
+                    <span class="text-xs text-gray-400 font-medium mb-1">NOTA FINAL</span>
+                    <div class="flex items-baseline gap-3">
+                        <span id="scale-result-exact" class="text-xl text-gray-400 font-medium">-</span>
+                        <span class="text-gray-300 text-sm">➜</span>
+                        <span id="scale-result-rounded" class="text-5xl font-black text-gray-300">-</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="manage-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 relative flex flex-col max-h-[90vh] border border-gray-200 dark:border-gray-700">
+            <button onclick="closeManageModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 z-10" aria-label="Cerrar gestión">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            
+            <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2 flex-shrink-0">
+                <span class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 p-1.5 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                </span>
+                Gestionar Ramos
+            </h2>
+
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Ordena o elimina tus asignaturas. <br>Los cambios se aplicarán al presionar "Guardar".</p>
+
+            <div id="manage-list" class="space-y-2 overflow-y-auto flex-1 pr-2 mb-4">
+                </div>
+
+            <div class="flex gap-3 pt-2 border-t border-gray-100 dark:border-gray-700">
+                <button onclick="closeManageModal()" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Cancelar</button>
+                <button onclick="saveManageChanges()" class="flex-1 py-2.5 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-bold shadow-md transition-all active:scale-[0.98]">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="info-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 relative flex flex-col max-h-[90vh] border border-gray-200 dark:border-gray-700">
+            <button onclick="toggleModal('info-modal', false)" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 z-10" aria-label="Cerrar información">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            
+            <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Información y Ayuda</h2>
+
+            <div class="space-y-6 overflow-y-auto flex-1 pr-2 text-sm text-gray-600 dark:text-gray-300">
+                
+                <div>
+                    <h3 class="font-bold text-gray-800 dark:text-white mb-3 text-base">Guía Rápida</h3>
+                    <ul class="space-y-4 list-none pl-0">
+                        <li class="flex gap-3 items-start">
+                            <div class="flex-shrink-0 mt-0.5 text-primary-500 bg-primary-50 dark:bg-primary-900/30 p-1.5 rounded-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            </div>
+                            <p class="leading-snug"><span class="font-bold text-gray-700 dark:text-gray-200">Guardado Automático:</span><br>Todo se guarda en tu dispositivo al instante. Si cierras la pestaña, tus notas seguirán aquí.</p>
+                        </li>
+
+                        <li class="flex gap-3 items-start">
+                            <div class="flex-shrink-0 mt-0.5 text-primary-500 bg-primary-50 dark:bg-primary-900/30 p-1.5 rounded-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+                            </div>
+                            <p class="leading-snug"><span class="font-bold text-gray-700 dark:text-gray-200">Botón Examen:</span><br>Ahora con doble función. Calcula <strong>qué nota necesitas</strong> para aprobar o ingresa tu nota real para ver tu <strong>promedio final</strong> exacto.</p>
+                        </li>
+
+                        <li class="flex gap-3 items-start">
+                            <div class="flex-shrink-0 mt-0.5 text-primary-500 bg-primary-50 dark:bg-primary-900/30 p-1.5 rounded-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+                            </div>
+                            <p class="leading-snug"><span class="font-bold text-gray-700 dark:text-gray-200">Botón Escala:</span><br>Transforma puntajes o porcentajes a nota. Puedes editar la exigencia (ej: 60%) y el puntaje máximo.</p>
+                        </li>
+
+                        <li class="flex gap-3 items-start">
+                            <div class="flex-shrink-0 mt-0.5 text-primary-500 bg-primary-50 dark:bg-primary-900/30 p-1.5 rounded-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                            </div>
+                            <p class="leading-snug"><span class="font-bold text-gray-700 dark:text-gray-200">Botón Ordenar:</span><br>Organiza tus asignaturas por prioridad o elimina las que ya no necesites de forma segura.</p>
+                        </li>
+
+                        <li class="flex gap-3 items-start">
+                            <div class="flex-shrink-0 mt-0.5 text-primary-500 bg-primary-50 dark:bg-primary-900/30 p-1.5 rounded-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+                            </div>
+                            <p class="leading-snug"><span class="font-bold text-gray-700 dark:text-gray-200">Personalizar:</span><br>Cambia el color de énfasis, activa el modo oscuro y elige la tipografía que más te guste.</p>
+                        </li>
+
+                    </ul>
+                </div>
+
+                <div class="flex gap-3 items-start">
+                    <div class="flex-shrink-0 mt-0.5 text-green-500 bg-green-50 dark:bg-green-900/30 p-1.5 rounded-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-800 dark:text-white mb-1 text-base">Privacidad</h3>
+                        <p class="leading-snug">Todo lo que escribes aquí, se queda en tu dispositivo. Tus notas se guardan en la memoria de tu navegador (Local Storage). Yo no tengo acceso a ellas, no hay bases de datos, ni servidores externos. Eres tú y tu navegador.</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-100 dark:border-gray-700 flex gap-3 items-start">
+                    <div class="flex-shrink-0 mt-0.5 text-gray-400 dark:text-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-800 dark:text-white mb-1">Importante</h3>
+                        <p class="text-xs">Esta calculadora es una <strong>herramienta de apoyo</strong>. Aunque usamos el redondeo estándar, cada institución puede tener criterios distintos. Por favor, usa estos resultados para planificarte, pero siempre confirma tu situación final en tu intranet oficial.</p>
+                    </div>
+                </div>
+
+                <div class="text-center pt-4 border-t border-gray-100 dark:border-gray-700 mt-2">
+    
+    <p class="text-xs text-gray-400 dark:text-gray-500 mb-1">
+        Diseñado y programado por una <br><strong class="text-gray-600 dark:text-gray-300">Estudiante de Diseño Digital y Web</strong>.
+    </p>
+    <p class="text-[10px] text-gray-300 dark:text-gray-600 font-medium mb-4">
+        2026
+    </p>
+
+    <aside id="kofi-static-box" style="
+    background-color: #fffbeb !important; 
+    border: 1px solid #fde68a !important; 
+    border-radius: 0.75rem !important; 
+    padding: 1rem !important; 
+    margin-top: 1rem !important; 
+    box-shadow: none !important; 
+    font-family: 'Inter', system-ui, sans-serif !important; 
+    text-shadow: none !important;
+    color: #4b5563 !important;">
+    
+    <p style="
+        color: #4b5563 !important; 
+        font-size: 0.75rem !important; 
+        margin-bottom: 0.75rem !important; 
+        line-height: 1.6 !important; 
+        font-weight: 400 !important;
+        text-shadow: none !important;">
+        Este proyecto es <strong style="color: #d97706 !important; font-weight: 700 !important;">100% gratuito y sin anuncios</strong>. 
+        Si te ayudó a salvar el semestre, puedes invitarme un café para mantener el servidor activo.
+    </p>
+    
+    <a href="https://ko-fi.com/misramos" target="_blank" rel="noopener noreferrer" style="
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+        padding: 0.625rem 1.25rem !important;
+        background-color: #f59e0b !important; 
+        color: #ffffff !important;
+        border-radius: 9999px !important;
+        font-weight: 700 !important;
+        font-size: 0.75rem !important;
+        text-decoration: none !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        transition: transform 0.2s !important;"
+        onmouseover="this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.transform='translateY(0)'"
+        aria-label="Apoyar a Mis Ramos en Ko-fi">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="animate-pulse" style="
+            color: #ffffff !important; 
+            stroke: #ffffff !important; 
+            filter: none !important;">
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+            <line x1="6" y1="1" x2="6" y2="4"></line>
+            <line x1="10" y1="1" x2="10" y2="4"></line>
+            <line x1="14" y1="1" x2="14" y2="4"></line>
+        </svg>
+        <span style="color: #ffffff !important; text-shadow: none !important;">Invítame un café</span>
+    </a>
+
+</aside>
+
+</div>
+
+            </div>
+        </div>
+    </div>
+
+        <footer class="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 mt-8 transition-colors duration-300 relative z-10">        <div class="max-w-4xl mx-auto px-6 pt-8 pb-6">
+            
+            <div class="flex flex-col lg:flex-row justify-between items-center gap-6 mb-8">
+                
+                <div class="flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="340 0 1140 1024" class="h-8 w-auto md:h-10 text-primary-600 dark:text-primary-500 transition-colors duration-300" aria-hidden="true">
+                        <path fill="currentColor" d="M1303.929 754.923c.175-.242.29-.527.345-.82l8.494-45.111 3.133-16.063a2.034 2.034 0 0 0-1.996-2.424l-62.428-.013c-.983 0-1.825.701-2.001 1.668q-5.73 31.256-11.456 62.515a2.034 2.034 0 0 0 1.992 2.4l60.553.254c.29 0 .585-.046.848-.17.987-.467 1.788-1.234 2.516-2.236m-118.675-.24 11.716-61.778a2.034 2.034 0 0 0-1.998-2.413l-45.482.008a2.035 2.035 0 0 0-2.033 2.035l-.007 62.614c0 1.143.943 2.062 2.086 2.034l33.772-.846a2.03 2.03 0 0 0 1.946-1.654m136.582-95.351 11.886-62.821a2.035 2.035 0 0 0-1.993-2.414l-61.795-.162a2.034 2.034 0 0 0-2.004 1.656l-11.91 62.809a2.035 2.035 0 0 0 1.994 2.413l61.818.175a2.034 2.034 0 0 0 2.004-1.656m-118.582-.116 11.839-63.843a2.033 2.033 0 0 0-2-2.404h-64.172c-1.13 0-2.044.922-2.033 2.052l.582 63.843a2.034 2.034 0 0 0 2.034 2.016h51.75c.98 0 1.822-.7 2-1.664m129.512-117.179a13.86 13.86 0 0 0 13.627-11.314l10.772-57.71c1.101-5.902-2.835-10.381-8.477-11.14a2.4 2.4 0 0 0-.326-.021l-191.161.06q-.239 0-.47.048c-4.753 1.035-9.15 4.312-9.153 9.485l-.02 60.675c-.001 4.11 3.359 9.87 8.163 9.87zm-305.273-77.416 32.87-53.873a2.04 2.04 0 0 1 1.737-.975l316.493.002c4.996 0 9.597 1.565 13.91 3.082 17.403 6.119 24.03 24.642 20.7 42.286l-48.087 254.662-9.464 49.938c-1.815 9.572-5.64 17.569-11.287 25.44-10.995 14.106-27.164 24.708-45.892 24.713l-201.99.064a2.034 2.034 0 0 1-2.034-2.035l-.007-240.674v-.063c-.01-2.019-2.717-2.713-3.77-.992l-23.546 38.513-95.433 154.914a2.04 2.04 0 0 1-1.733.966l-58.572-.024c-.706 0-1.36-.365-1.731-.965L788.778 563.983c-.865-1.4-2.95-1.246-3.6.266l-11.417 26.602-52.89 129.74-35.837 88.073a2.04 2.04 0 0 1-1.892 1.267l-87.376-.308c-32.242-.115-57.045-28.002-58.778-59.764a3 3 0 0 1-.004-.147l.014-269.525.09-226.763c.012-31.167 25.816-62.55 57.873-62.697l199.67-.922c12.713-.058 23.077 4.899 31.703 13.472l43.578 43.304 16.433 16.01c.379.37.888.577 1.419.578l383.816.046c12.974.002 24.422 5.532 34.38 12.677q.085.061.165.13c13.87 11.689 23.596 27.46 23.712 46.029l.376 61.022a2.033 2.033 0 0 1-2.033 2.047l-71.747.025a2.033 2.033 0 0 1-2.033-1.99l-.331-15.538c.037-13.334-11.155-28.61-26.473-28.61l-587.85.002c-14.372 0-26.85 14.354-26.852 28.224l-.05 246.35c0 2.324 3.269 2.832 3.973.617l19.799-62.232 21.372-67.83 8.704-28.086c4.944-15.955 15.173-29.321 29.305-38.015 9.681-5.322 19.423-8.208 30.637-8.208l92.347-.008c.705 0 1.361.366 1.732.967l43.827 71.173 54.01 87.963 20.607 33.2c.799 1.287 2.672 1.281 3.463-.01z"/>
+</svg>
+                </div>
+
+                <div class="flex flex-wrap justify-center sm:justify-end items-center gap-4 md:gap-8">
+                    <button onclick="toggleModal('info-modal', true)" class="text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors flex items-center gap-2 hover:underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        Información y Ayuda
+                    </button>
+
+                    <button onclick="toggleModal('contact-modal', true)" class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors flex items-center gap-2 hover:underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        Sugerencias y Errores
+                    </button>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-100 dark:border-gray-800 pt-6 text-center">
+                <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">
+   Hecho con 
+<button 
+    type="button"
+    onclick="openStoryModal()" 
+    class="text-primary-500 hover:text-primary-600 hover:scale-125 inline-block transition-transform cursor-pointer select-none bg-transparent border-none p-0" 
+    title="Ver la historia detrás del proyecto"
+    aria-label="Ver la historia detrás del proyecto"
+>
+    ♥
+</button> 
+por una estudiante de Diseño.
+</p>
+                <p class="text-[10px] text-gray-600 dark:text-gray-400 font-medium">
+                    &copy; 2026 Mis Ramos | Todos los derechos reservados.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="contact-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 relative border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-200">
+            <button onclick="toggleModal('contact-modal', false)" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Cerrar formulario">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="bg-primary-50 dark:bg-primary-900/30 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 text-primary-600 dark:text-primary-400">
+                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                </div>
+                <h2 id="modal-title" class="text-lg font-bold text-gray-800 dark:text-white">Contáctame</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-tight">
+                    ¿Tienes alguna idea o encontraste un error? <br><span class="text-primary-600 dark:text-primary-400 font-medium">¡Cuéntame!</span>
+                </p>
+            </div>
+
+            <form name="contacto" method="POST" data-netlify="true" netlify netlify-honeypot="bot-field" id="contact-form" class="space-y-4">
+                <input type="hidden" name="form-name" value="contacto">
+                <p class="hidden" aria-hidden="true">
+                    <label>Don’t fill this out if you’re human: <input name="bot-field"></label>
+                </p>
+                <div>
+                    <label for="name" class="block text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Tu Nombre (Opcional)</label>
+                    <input type="text" name="name" id="name" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:text-white rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary-500 outline-none transition-all">
+                </div>
+                <div>
+                    <label for="message" class="block text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Mensaje</label>
+                    <textarea 
+                        name="message" 
+                        id="message" 
+                        required 
+                        rows="4" 
+                        maxlength="500" 
+                        minlength="15"
+                        class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:text-white rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary-500 outline-none resize-none transition-all placeholder-gray-400" 
+                        placeholder="Escribe aquí (mínimo 15 letras)..."
+                    ></textarea>
+                    <div class="flex justify-between items-center mt-1">
+                        <p class="text-[10px] text-gray-400">Mínimo 15 caracteres.</p>
+                        <p class="text-xs text-right text-gray-400">
+                            <span id="char-current">0</span>/500
+                        </p>
+                    </div>
+                </div>
+                <button type="submit" id="submit-btn" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 rounded-lg transition-all duration-300 active:scale-[0.98] text-sm flex justify-center items-center gap-2 focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span id="btn-text">Enviar Comentario</span>
+                    <svg id="btn-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+                <p id="limit-message" class="hidden text-xs text-center text-red-500 mt-2 font-medium">
+                    Podrás enviar otro mensaje en <span id="time-remaining"></span>.
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <div id="exam-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 relative flex flex-col max-h-[90vh] border border-gray-200 dark:border-gray-700">
+        
+        <button onclick="closeExamCalculator()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 z-10" aria-label="Cerrar calculadora">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        
+        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2 flex-shrink-0">
+            <span class="bg-primary-50 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 p-1.5 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+            </span>
+            Calculadora Examen
+        </h2>
+
+        <div class="relative flex bg-gray-100 dark:bg-gray-700 p-1 rounded-lg mb-4 flex-shrink-0 cursor-pointer" role="group" aria-label="Tipo de cálculo de examen">
+    
+    <div id="exam-toggle-bg" class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-white dark:bg-gray-600 rounded-md shadow-sm transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"></div>
+
+    <button id="mode-need" 
+            onclick="setExamMode('need')" 
+            aria-label="Calcular la nota mínima que necesito para aprobar"
+            class="relative z-10 flex-1 py-1.5 text-xs md:text-sm font-medium rounded-md transition-colors duration-200 text-gray-800 dark:text-white">
+        ¿Cuánto necesito?
+    </button>
+
+    <button id="mode-final" 
+            onclick="setExamMode('final')" 
+            aria-label="Calcular mi promedio final obteniendo una nota específica"
+            class="relative z-10 flex-1 py-1.5 text-xs md:text-sm font-medium rounded-md transition-colors duration-200 text-gray-500 dark:text-gray-400">
+        ¿Nota Final?
+    </button>
+</div>
+
+        <div class="space-y-4 overflow-y-auto flex-1 pr-2">
+            <div>
+                <label for="exam-weight" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Ponderación Examen</label>
+                <div class="relative">
+                    <input type="number" id="exam-weight" value="30" oninput="calculateExamLogic()" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2 text-center font-bold text-gray-700 focus:ring-2 focus:ring-primary-500 outline-none text-base sm:text-sm">
+                    <span class="absolute right-3 top-2 text-gray-400 dark:text-gray-500 font-bold">%</span>
+                </div>
+            </div>
+
+            <div id="calc-need-container">
+                <label for="exam-target" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Nota para aprobar</label>
+                <input type="number" id="exam-target" value="40" oninput="calculateExamLogic()" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2 text-center font-bold text-gray-700 focus:ring-2 focus:ring-primary-500 outline-none text-base sm:text-sm">
+            </div>
+
+            <div id="calc-final-container" class="hidden">
+                <label for="exam-obtained" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Nota que sacaste en el examen</label>
+                <input type="number" id="exam-obtained" placeholder="Ej: 45" oninput="calculateExamLogic()" class="w-full border border-primary-300 dark:border-primary-600 dark:bg-gray-700 dark:text-white rounded-lg p-2 text-center font-bold text-primary-600 focus:ring-2 focus:ring-primary-500 outline-none text-base sm:text-sm">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">Nota de Presentación</label>
+                <div class="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-lg mb-4">
+                    <button id="tab-manual" onclick="setExamSource('manual')" class="flex-1 py-1.5 text-sm font-medium rounded-md bg-white text-gray-800 shadow-sm transition-all">Manual</button>
+                    <button id="tab-select" onclick="setExamSource('select')" class="flex-1 py-1.5 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 transition-all">Copiar de Ramo</button>
+                </div>
+
+                <div id="source-manual-container">
+                    <div id="manual-grades-list" class="space-y-2"></div>
+                    <div class="flex items-center justify-center gap-2 mt-3">
+                        <button onclick="addManualGrade()" class="text-primary-600 bg-primary-50 dark:bg-gray-700 rounded-full p-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
+                        <button onclick="removeManualGrade()" class="text-red-400 bg-red-50 dark:bg-red-900/20 rounded-full p-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
+                    </div>
+                    <div class="flex justify-between items-center mt-2 px-2 text-xs text-gray-500 border-t border-dashed border-gray-200 dark:border-gray-700 pt-2">
+                        <span>Promedio calculado:</span>
+                        <span id="manual-avg-display" class="font-bold text-primary-600 dark:text-primary-400 text-lg">-</span>
+                    </div>
+                </div>
+
+                <div id="source-select-container" class="hidden">
+                    <select id="exam-subject-select" onchange="calculateExamLogic()" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2.5 text-gray-700 focus:ring-2 focus:ring-primary-500 outline-none bg-white text-base sm:text-sm">
+                    </select>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 text-center border border-gray-200 dark:border-gray-600 mt-2">
+                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-1">Resultado:</p>
+                <div id="exam-result" class="text-4xl font-black text-primary-600 dark:text-primary-400">-</div>
+                <p id="exam-message" class="text-xs text-gray-400 mt-1">Ingresa tus datos arriba</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="story-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg p-0 relative border border-gray-100 dark:border-gray-700 overflow-hidden animate-in zoom-in-95 duration-300">
+        
+        <div class="bg-gradient-to-r from-primary-600 to-primary-400 p-6 text-white text-center relative">
+            <button onclick="closeStoryModal()" class="absolute top-4 right-4 text-white/80 hover:text-white hover:bg-white/20 rounded-full p-1 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            
+            <h2 class="text-2xl font-bold tracking-tight">Notas de la Creadora</h2>
+            <p class="story-subtitle text-primary-50 text-xs font-medium uppercase tracking-wider opacity-90 mt-1">La historia real</p>
+        </div>
+
+        <div class="p-6 md:p-8 max-h-[60vh] overflow-y-auto text-gray-600 dark:text-gray-300 text-sm leading-relaxed space-y-4 text-center md:text-left">
+            
+            <p>
+                Todo comenzó el <strong class="text-primary-600 dark:text-primary-400">24 de enero</strong>, en plenas vacaciones. Mientras debería haber estado descansando, trabajando o incluso jugando, en un impulso repentino decidí dejar todo listo antes de tiempo.
+            </p>
+
+            <p>
+                La sola idea de volver a tener 6 pestañas abiertas y el celular en la mano tratando de <strong>calcular el promedio ponderado</strong> me superaba.
+            </p>
+
+            <div class="bg-primary-50 dark:bg-gray-700/50 p-4 rounded-xl border border-primary-100 dark:border-gray-600 italic text-gray-700 dark:text-gray-200 text-xs relative my-6">
+                <span class="absolute top-[-10px] left-4 text-2xl text-primary-300">❝</span>
+                La emoción fue tanta que no paré hasta terminar. Pasé de la idea a tener <strong>la web online ese mismo día</strong>. Quería sentir el control total para <strong>simular mis notas</strong> y, por fin, construir yo misma esa <strong>calculadora de notas perfecta</strong> que siempre busqué en internet y nunca encontré.
+            </div>
+
+            <p>
+                Soy estudiante de <strong>Diseño Digital y Web</strong>. Mi fuerte es lo visual, así que dirigí este proyecto usando IA para la lógica compleja (mi plan A era un Excel, pero la verdad... no soporté).
+            </p>
+            
+            <p class="font-medium text-gray-800 dark:text-white pt-2 border-t border-gray-100 dark:border-gray-700 mt-4">
+                Espero que esto te dé la misma paz mental que a mí, o al menos evite que caigas en la locura igual que yo.
+            </p>
+
+            <div class="mt-8 mb-2 pt-4 border-t border-dashed border-gray-200 dark:border-gray-700">
+                <h3 class="text-sm font-bold text-gray-800 dark:text-white uppercase tracking-wide mb-1">
+                    Zona Secreta
+                </h3>
+                <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                    Ejecuta el script de abajo para probar suerte y desbloquear <strong>temas visuales ocultos</strong>.
+                    <br>
+                    <span class="opacity-75 text-[10px]">(Es solo una simulación segura, no es un virus real).</span>
+                </p>
+            </div>
+            <div id="hacker-terminal" class="bg-gray-900 rounded-t-lg p-4 font-mono text-xs border border-gray-700 border-b-0 shadow-inner h-45 overflow-y-auto flex flex-col justify-end relative">
+                <div id="hacker-terminal-inner" class="terminal-shield bg-gray-900 rounded-t-lg p-4 font-mono text-xs border border-gray-700 border-b-0 shadow-inner h-32 overflow-y-auto flex flex-col justify-end relative">
+                    <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 pointer-events-none bg-[length:100%_2px,3px_100%]"></div>
+                    
+                    <div id="terminal-content" class="terminal-shield-content text-green-500 z-0 space-y-1">
+                        <p class="text-gray-400">Sistema listo...</p>
+                        <p>> Esperando input del usuario <span class="animate-pulse">_</span></p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-b-lg p-3 border border-gray-700 flex justify-center items-center">
+                    
+                    <button id="btn-init-hack" onclick="runHackerSequence()" class="group relative inline-flex items-center justify-center overflow-hidden rounded-md bg-gray-900 px-6 py-2 font-mono font-medium text-green-500 shadow-md transition-all hover:bg-gray-700 border border-green-500/30 hover:border-green-500 hover:shadow-green-500/20 active:scale-95">
+                        <span class="mr-2 animate-pulse">►</span> EJECUTAR_SCRIPT
+                    </button>
+
+                    <button id="btn-secret-reward" onclick="unlockSecretTheme()" aria-label="Desbloquear tema Neón" class="hidden animate-in zoom-in duration-300 bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold py-2 px-5 rounded-full text-xs shadow-[0_0_15px_rgba(255,0,255,0.5)] transition-all transform hover:scale-105 active:scale-95 items-center gap-2 ring-2 ring-fuchsia-400 ring-offset-2 dark:ring-offset-gray-900">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        ACCESO CONCEDIDO: TEMA NEÓN
+                    </button>
+                </div>
+
+                </div>
+            
+            </div>
+
+            <div class="pt-4 flex justify-center opacity-50">
+                <span class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">v3.0 &bull; 2026</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="snapshot-container">
+    <div class="snap-header">
+        <div class="snap-brand">
+            <div style="color: #2563eb; display: flex; align-items: center;">
+                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="340 0 1140 1024" style="height: 45px; width: auto;" fill="currentColor">
+                    <path d="M1303.929 754.923c.175-.242.29-.527.345-.82l8.494-45.111 3.133-16.063a2.034 2.034 0 0 0-1.996-2.424l-62.428-.013c-.983 0-1.825.701-2.001 1.668q-5.73 31.256-11.456 62.515a2.034 2.034 0 0 0 1.992 2.4l60.553.254c.29 0 .585-.046.848-.17.987-.467 1.788-1.234 2.516-2.236m-118.675-.24 11.716-61.778a2.034 2.034 0 0 0-1.998-2.413l-45.482.008a2.035 2.035 0 0 0-2.033 2.035l-.007 62.614c0 1.143.943 2.062 2.086 2.034l33.772-.846a2.03 2.03 0 0 0 1.946-1.654m136.582-95.351 11.886-62.821a2.035 2.035 0 0 0-1.993-2.414l-61.795-.162a2.034 2.034 0 0 0-2.004 1.656l-11.91 62.809a2.035 2.035 0 0 0 1.994 2.413l61.818.175a2.034 2.034 0 0 0 2.004-1.656m-118.582-.116 11.839-63.843a2.033 2.033 0 0 0-2-2.404h-64.172c-1.13 0-2.044.922-2.033 2.052l.582 63.843a2.034 2.034 0 0 0 2.034 2.016h51.75c.98 0 1.822-.7 2-1.664m129.512-117.179a13.86 13.86 0 0 0 13.627-11.314l10.772-57.71c1.101-5.902-2.835-10.381-8.477-11.14a2.4 2.4 0 0 0-.326-.021l-191.161.06q-.239 0-.47.048c-4.753 1.035-9.15 4.312-9.153 9.485l-.02 60.675c-.001 4.11 3.359 9.87 8.163 9.87zm-305.273-77.416 32.87-53.873a2.04 2.04 0 0 1 1.737-.975l316.493.002c4.996 0 9.597 1.565 13.91 3.082 17.403 6.119 24.03 24.642 20.7 42.286l-48.087 254.662-9.464 49.938c-1.815 9.572-5.64 17.569-11.287 25.44-10.995 14.106-27.164 24.708-45.892 24.713l-201.99.064a2.034 2.034 0 0 1-2.034-2.035l-.007-240.674v-.063c-.01-2.019-2.717-2.713-3.77-.992l-23.546 38.513-95.433 154.914a2.04 2.04 0 0 1-1.733.966l-58.572-.024c-.706 0-1.36-.365-1.731-.965L788.778 563.983c-.865-1.4-2.95-1.246-3.6.266l-11.417 26.602-52.89 129.74-35.837 88.073a2.04 2.04 0 0 1-1.892 1.267l-87.376-.308c-32.242-.115-57.045-28.002-58.778-59.764a3 3 0 0 1-.004-.147l.014-269.525.09-226.763c.012-31.167 25.816-62.55 57.873-62.697l199.67-.922c12.713-.058 23.077 4.899 31.703 13.472l43.578 43.304 16.433 16.01c.379.37.888.577 1.419.578l383.816.046c12.974.002 24.422 5.532 34.38 12.677q.085.061.165.13c13.87 11.689 23.596 27.46 23.712 46.029l.376 61.022a2.033 2.033 0 0 1-2.033 2.047l-71.747.025a2.033 2.033 0 0 1-2.033-1.99l-.331-15.538c.037-13.334-11.155-28.61-26.473-28.61l-587.85.002c-14.372 0-26.85 14.354-26.852 28.224l-.05 246.35c0 2.324 3.269 2.832 3.973.617l19.799-62.232 21.372-67.83 8.704-28.086c4.944-15.955 15.173-29.321 29.305-38.015 9.681-5.322 19.423-8.208 30.637-8.208l92.347-.008c.705 0 1.361.366 1.732.967l43.827 71.173 54.01 87.963 20.607 33.2c.799 1.287 2.672 1.281 3.463-.01z"/></svg>
+            </div>
+            <div style="margin-left: 12px;">
+                <h1 style="font-size: 24px; font-weight: 800; color: #111827; margin: 0; line-height: 1.2; font-family: 'Inter', sans-serif;">Mis Ramos</h1>
+                <p style="margin: 0; color: #4b5563; font-size: 14px; font-family: 'Inter', sans-serif;">Resumen de Notas</p>
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <span style="font-size: 12px; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', sans-serif;">Promedio General</span>
+            <div id="snap-total-pga" style="font-size: 56px; font-weight: 900; color: #111827; line-height: 1; font-family: 'Inter', sans-serif;">-</div>
+        </div>
+    </div>
+
+    <div id="snap-subjects-list">
+        </div>
+
+    <div class="snap-footer">
+        <div style="font-weight: 600; font-family: 'Inter', sans-serif;">misramos.cl</div>
+        <div style="font-family: 'Inter', sans-serif;">Generado el <span id="snap-date"></span></div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<script src="script.js" defer></script>
+</body>
+</html>
