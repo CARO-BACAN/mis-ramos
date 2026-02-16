@@ -151,6 +151,23 @@ html.dark .ghost-value {
 [data-theme="coffee"] #story-modal h2 { color: #fdfaf5 !important; }
 [data-theme="coffee"] #story-modal p { color: #d1c7b7 !important; }
 
+/* 10. Ajuste Especial: Botón "Nuevo Semestre" en el Modal */
+[data-theme="coffee"] #semester-modal button[onclick*="createNewSemester"] {
+    background-color: #e7e0d3 !important; /* Fondo Crema (Variable 200) */
+    color: #3e2723 !important;            /* Texto Café Espresso */
+    border: 2px solid #3e2723 !important; /* Borde para que resalte */
+}
+
+/* Forzamos que el icono (+) también sea café oscuro */
+[data-theme="coffee"] #semester-modal button[onclick*="createNewSemester"] svg {
+    stroke: #3e2723 !important;
+}
+
+/* Efecto al pasar el mouse (para que se sienta vivo) */
+[data-theme="coffee"] #semester-modal button[onclick*="createNewSemester"]:hover {
+    background-color: #d7ccc8 !important;
+}
+
 /* ========================================= */
 /* --- TEMA 2: RETRO --- */
 /* ========================================= */

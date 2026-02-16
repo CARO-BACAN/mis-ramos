@@ -16,7 +16,10 @@ const SECRET_THEMES = {
     'glitch': { name: 'System Error', color: '#22c55e', bg: '#000000', forced: 'dark' }
 };
 
-
+    // --- VARIABLES DE SEMESTRES ---
+        let allSemesters = []; 
+        let currentSemesterId = null;
+        const SCROLL_THRESHOLD = 100; // Píxeles para esconder el botón
         let subjects = [];
         let manualGrades = [];
         // --- NUEVO CONTADOR GACHA ---
@@ -202,36 +205,62 @@ function updateToggleUI() {
 
         function loadData() {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    
     if (saved) {
         try {
-            subjects = JSON.parse(saved);
-            if (!Array.isArray(subjects)) {
-                subjects = generateInitialData(6);
-            } else {
-                // --- BLOQUE DE COMPATIBILIDAD V3 ---
-                // Nos aseguramos de que todos los ramos cargados tengan isOpen: true
-                subjects.forEach(sub => {
-                    if (sub.isOpen === undefined){
-                        sub.isOpen = true;
-                    }
+            const parsed = JSON.parse(saved);
+            
+            // --- CASO 1: DATOS ANTIGUOS (Array simple) -> Migración Automática ---
+            if (Array.isArray(parsed)) {
+                // Mantenemos tu corrección de compatibilidad (isOpen)
+                parsed.forEach(sub => {
+                    if (sub.isOpen === undefined) sub.isOpen = true;
                 });
-                // -----------------------------------
+
+                const firstId = Date.now();
+                allSemesters = [{
+                    id: firstId,
+                    name: "Mi Primer Semestre", 
+                    data: parsed 
+                }];
+                currentSemesterId = firstId;
+                subjects = parsed; 
+                saveData(); // Guardamos el nuevo formato inmediatamente
+            } 
+            // --- CASO 2: DATOS NUEVOS (Sistema de Semestres) ---
+            else if (parsed.semesters) {
+                allSemesters = parsed.semesters;
+                currentSemesterId = parsed.currentId || allSemesters[0].id;
+                
+                // Buscamos los datos de la carpeta actual
+                const activeSemester = allSemesters.find(s => s.id == currentSemesterId);
+                subjects = activeSemester ? activeSemester.data : [];
             }
-        } catch(e) { 
-            subjects = generateInitialData(6); 
+        } catch(e) {
+            console.error("Error al cargar, creando nuevo...", e);
+            createDefaultSemester();
         }
     } else {
-        subjects = generateInitialData(6);
+        createDefaultSemester();
     }
+
+    // Inicializamos todo
     renderGrid();
     updateCalculations();
     initCharCounter();
     
+    // Aseguramos que el modal de semestres arranque oculto
+    const semModal = document.getElementById('semester-modal');
+    if(semModal) semModal.classList.add('hidden');
+
+    // --- TU CÓDIGO ORIGINAL DEL FORMULARIO DE CONTACTO (LO MANTENEMOS) ---
     const contactForm = document.getElementById('contact-form');
     if(contactForm) {
-        // Agregamos 'e' (evento) para poder detener el envío si falla
-        contactForm.addEventListener('submit', function(e) {
-            
+        // Limpiamos listeners anteriores para evitar duplicados (buena práctica)
+        const newForm = contactForm.cloneNode(true);
+        contactForm.parentNode.replaceChild(newForm, contactForm);
+        
+        newForm.addEventListener('submit', function(e) {
             // --- INICIO VALIDACIÓN ---
             const messageField = document.getElementById('message');
             const messageText = messageField.value.trim();
@@ -242,8 +271,12 @@ function updateToggleUI() {
                 
                 const faltan = 15 - messageText.length;
                 
-                // Mostramos la alerta (requiere la función showToast del Paso 2)
-                showToast(`Escribe un poco más, por favor (faltan ${faltan} caracteres).`, 'warning');
+                // Mostramos la alerta
+                if(typeof showToast === 'function') {
+                    showToast(`Escribe un poco más, por favor (faltan ${faltan} caracteres).`, 'warning');
+                } else {
+                    alert(`Faltan ${faltan} caracteres.`);
+                }
                 
                 // Efecto de borde rojo
                 messageField.classList.add('ring-2', 'ring-red-500');
@@ -259,15 +292,36 @@ function updateToggleUI() {
     }
 }
 
+function createDefaultSemester() {
+    const id = Date.now();
+    subjects = generateInitialData(6);
+    allSemesters = [{ id: id, name: "Semestre 1", data: subjects }];
+    currentSemesterId = id;
+    saveData();
+}
 
         function saveData() {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(subjects));
-            const ind = document.getElementById('save-indicator');
-            if(ind) {
-                ind.style.opacity = '1';
-                setTimeout(() => { ind.style.opacity = '0'; }, 1000);
-            }
-        }
+    // 1. Antes de guardar, actualizamos la "carpeta" actual con lo que hay en la pantalla
+    const index = allSemesters.findIndex(s => s.id == currentSemesterId);
+    if (index !== -1) {
+        allSemesters[index].data = subjects;
+    }
+
+    // 2. Empaquetamos todo el sistema (ID actual + Todos los semestres)
+    const storageObject = {
+        currentId: currentSemesterId,
+        semesters: allSemesters
+    };
+
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storageObject));
+    
+    // 3. Indicador visual de guardado (Tu código original intacto)
+    const ind = document.getElementById('save-indicator');
+    if(ind) {
+        ind.style.opacity = '1';
+        setTimeout(() => { ind.style.opacity = '0'; }, 1000);
+    }
+}
 
         function addSubject() {
             if (subjects.length >= 8) return alert("Has alcanzado el máximo de 8 ramos.");
@@ -1984,6 +2038,146 @@ function showToast(message, type = 'success') {
         toast.classList.add('opacity-0', 'transition-opacity', 'duration-500');
         setTimeout(() => toast.remove(), 500);
     }, 3000);
+}
+
+// --- LÓGICA DEL BOTÓN FLOTANTE (Scroll) ---
+window.addEventListener('scroll', () => {
+    const btn = document.getElementById('semester-btn');
+    if (!btn) return;
+
+    // Si bajamos más de 100px, escondemos el botón
+    if (window.scrollY > SCROLL_THRESHOLD) {
+        btn.classList.add('-translate-y-24', 'opacity-0', 'pointer-events-none');
+    } else {
+        // Si subimos, vuelve a aparecer
+        btn.classList.remove('-translate-y-24', 'opacity-0', 'pointer-events-none');
+    }
+});
+
+// --- GESTIÓN DE MODAL DE SEMESTRES ---
+
+function openSemesterModal() {
+    const modal = document.getElementById('semester-modal');
+    modal.classList.remove('hidden');
+    renderSemesterList();
+    history.pushState({ modalOpen: 'semester-modal' }, "");
+}
+
+function closeSemesterModal() {
+    document.getElementById('semester-modal').classList.add('hidden');
+    if (history.state && history.state.modalOpen === 'semester-modal') {
+        history.back();
+    }
+}
+
+function renderSemesterList() {
+    const container = document.getElementById('semester-list');
+    container.innerHTML = '';
+
+    allSemesters.forEach(sem => {
+        const isActive = sem.id == currentSemesterId;
+        
+        const div = document.createElement('div');
+        div.className = `p-3 rounded-xl border flex justify-between items-center transition-all ${
+            isActive 
+            ? 'bg-primary-50 border-primary-200 dark:bg-primary-900/20 dark:border-primary-800' 
+            : 'bg-white border-gray-100 hover:border-gray-300 dark:bg-gray-800 dark:border-gray-700'
+        }`;
+
+        div.innerHTML = `
+            <button onclick="switchSemester(${sem.id})" class="flex-1 text-left flex items-center gap-3">
+                <div class="${isActive ? 'text-primary-600' : 'text-gray-400'}">
+                    ${isActive 
+                        ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' 
+                        : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>'}
+                </div>
+                <div>
+                    <div class="font-bold text-sm ${isActive ? 'text-primary-700 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300'}">
+                        ${sem.name}
+                    </div>
+                    <div class="text-[10px] text-gray-400 font-mono">
+                        ${sem.data.length} Ramos
+                    </div>
+                </div>
+            </button>
+            
+            <div class="flex items-center gap-1">
+                <button onclick="editSemesterName(${sem.id})" class="p-2 text-gray-400 hover:text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded transition-colors" title="Editar nombre">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                </button>
+
+                ${!isActive ? `
+                <button onclick="deleteSemester(${sem.id})" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors" title="Eliminar semestre">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                </button>` : ''}
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function switchSemester(id) {
+    if (id == currentSemesterId) return; // Ya estamos aquí
+    
+    saveData(); // Guardamos el actual por si acaso
+    currentSemesterId = id;
+    
+    // Cargamos los nuevos datos
+    const activeSemester = allSemesters.find(s => s.id == currentSemesterId);
+    subjects = activeSemester ? activeSemester.data : [];
+    
+    renderGrid();
+    updateCalculations();
+    closeSemesterModal();
+    
+    showToast(`Cambiado a: ${activeSemester.name}`);
+}
+
+function createNewSemester() {
+    const name = prompt("Nombre del nuevo semestre (ej: 2026-2):");
+    if (!name || name.trim() === "") return;
+
+    saveData(); // Guardamos el actual
+
+    const newId = Date.now();
+    const newSubjects = generateInitialData(6); // Semestre nuevo = ramos vacíos
+
+    allSemesters.push({
+        id: newId,
+        name: name,
+        data: newSubjects
+    });
+
+    switchSemester(newId); // Cambiamos al nuevo automáticamente
+}
+
+function deleteSemester(id) {
+    if (allSemesters.length <= 1) {
+        alert("Debes tener al menos un semestre.");
+        return;
+    }
+    
+    if (confirm("¿Estás seguro de eliminar este semestre? Se perderán todas sus notas para siempre.")) {
+        allSemesters = allSemesters.filter(s => s.id !== id);
+        saveData(); // Guardamos el cambio (que es la eliminación)
+        renderSemesterList(); // Actualizamos la lista visual
+    }
+}
+
+function editSemesterName(id) {
+    // 1. Buscamos el semestre
+    const semester = allSemesters.find(s => s.id === id);
+    if (!semester) return;
+
+    // 2. Preguntamos el nuevo nombre
+    const newName = prompt("Nuevo nombre para este semestre:", semester.name);
+
+    // 3. Si escribió algo válido, lo guardamos
+    if (newName && newName.trim() !== "") {
+        semester.name = newName.trim();
+        saveData(); // Guardamos en memoria
+        renderSemesterList(); // Actualizamos la lista visual
+    }
 }
 
 window.onload = loadData;
