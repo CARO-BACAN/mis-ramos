@@ -2202,177 +2202,221 @@ function closeChartModal() {
         history.back();
     }
 }
+
+// --- LÓGICA DE GRÁFICOS HÍBRIDA (LÍNEA + RADAR) ---
+
+let currentChartMode = 'line'; // Estado por defecto
+
+function openChartModal() {
+    document.getElementById('chart-modal').classList.remove('hidden');
+    // Siempre abrir en modo Tendencia al inicio
+    switchChartType('line'); 
+    history.pushState({ modalOpen: 'chart-modal' }, "");
+}
+
+function switchChartType(mode) {
+    currentChartMode = mode;
+    
+    // 1. Actualizar botones visualmente
+    const btnLine = document.getElementById('btn-chart-line');
+    const btnRadar = document.getElementById('btn-chart-radar');
+    const activeClass = "bg-white dark:bg-gray-600 text-primary-600 dark:text-primary-400 shadow-sm border border-gray-200 dark:border-gray-500 font-bold";
+    const inactiveClass = "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium border border-transparent";
+
+    if (mode === 'line') {
+        btnLine.className = `flex-1 max-w-[150px] py-1.5 px-3 rounded-lg text-sm flex items-center justify-center gap-2 transition-all ${activeClass}`;
+        btnRadar.className = `flex-1 max-w-[150px] py-1.5 px-3 rounded-lg text-sm flex items-center justify-center gap-2 transition-all ${inactiveClass}`;
+        document.getElementById('chart-filters').classList.remove('hidden'); // Filtros útiles en línea
+    } else {
+        btnRadar.className = `flex-1 max-w-[150px] py-1.5 px-3 rounded-lg text-sm flex items-center justify-center gap-2 transition-all ${activeClass}`;
+        btnLine.className = `flex-1 max-w-[150px] py-1.5 px-3 rounded-lg text-sm flex items-center justify-center gap-2 transition-all ${inactiveClass}`;
+        document.getElementById('chart-filters').classList.add('hidden'); // Filtros no se usan en radar
+    }
+
+    // 2. Redibujar el gráfico
+    initProgressionChart();
+}
+
 function initProgressionChart() {
     const canvas = document.getElementById('progressionChart');
-    if (!canvas) return; // Seguridad extra
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const filterContainer = document.getElementById('chart-filters');
     
-    // Limpieza total antes de dibujar
-    filterContainer.innerHTML = ''; 
+    // Función auxiliar para cortar texto (La Tijera ✂️)
+    const truncateText = (str, limit) => {
+        return str.length > limit ? str.substring(0, limit) + '...' : str;
+    };
+
+    // Limpieza
+    filterContainer.innerHTML = '';
     if (myChart) {
         myChart.destroy();
         myChart = null;
     }
 
-    // --- DEBUG: Ver qué datos está leyendo el código ---
-    console.log("Generando gráfico con estos ramos:", subjects);
+    // ==========================================
+    // 📈 MODO 1: LÍNEA DE TENDENCIA
+    // ==========================================
+    if (currentChartMode === 'line') {
+        let maxGrades = 4;
+        subjects.forEach(s => { if (s.grades.length > maxGrades) maxGrades = s.grades.length; });
+        const labels = Array.from({length: maxGrades}, (_, i) => `Eva ${i + 1}`);
 
-    // 1. Encontrar el ramo con más notas para definir el ancho
-    // Usamos un mínimo de 4 evaluaciones para que el gráfico no se vea aplastado
-    let maxGrades = 4; 
-    subjects.forEach(s => {
-        if (s.grades.length > maxGrades) maxGrades = s.grades.length;
-    });
+        const datasets = subjects.map((subject, index) => {
+            const dataPoints = subject.grades.map(g => {
+                const cleanVal = g.value ? g.value.toString().replace(',', '.') : '';
+                return cleanVal === "" ? null : parseFloat(cleanVal);
+            });
+            const hasData = dataPoints.some(val => val !== null);
+            if (!hasData) return null;
 
-    // 2. Etiquetas del Eje X
-    const labels = Array.from({length: maxGrades}, (_, i) => `Eva ${i + 1}`);
+            return {
+                label: subject.name, // Nombre completo para el Tooltip
+                data: dataPoints,
+                borderColor: CHART_COLORS[index % CHART_COLORS.length],
+                backgroundColor: CHART_COLORS[index % CHART_COLORS.length],
+                tension: 0.3, pointRadius: 5, pointHoverRadius: 8,
+                pointBackgroundColor: 'white', borderWidth: 3, spanGaps: true
+            };
+        }).filter(ds => ds !== null);
 
-    // 3. Preparar los Datos
-    const datasets = subjects.map((subject, index) => {
-        // Convertimos las notas a números reales
-        const dataPoints = subject.grades.map(g => {
-            // Limpiamos el valor (cambiar comas por puntos)
-            const cleanVal = g.value ? g.value.toString().replace(',', '.') : '';
-            if (cleanVal === "") return null; // Si está vacío, es null
-            return parseFloat(cleanVal);
+        if (datasets.length === 0) {
+            drawEmptyState(ctx, "Ingresa notas para ver la tendencia 📈");
+            return;
+        }
+
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels, datasets },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { 
+                        min: 0, max: 75, 
+                        ticks: { stepSize: 10, callback: v => v > 70 ? null : (v / 10), color: '#9ca3af', font: { family: 'Inter', weight: 'bold' } }, 
+                        grid: { color: '#e5e7eb' } 
+                    },
+                    x: { ticks: { color: '#9ca3af' }, grid: { display: false } }
+                }
+            }
         });
 
-        // Verificamos si tiene datos para mostrar
-        const hasData = dataPoints.some(val => val !== null);
-        if (!hasData) return null; // Si el ramo no tiene notas, no creamos línea para él
-
-        return {
-            label: subject.name || `Ramo ${index + 1}`,
-            data: dataPoints,
-            borderColor: CHART_COLORS[index % CHART_COLORS.length],
-            backgroundColor: CHART_COLORS[index % CHART_COLORS.length], // Color del punto
-            tension: 0.3, 
-            pointRadius: 6, // <--- PUNTOS MÁS GRANDES (Para verlos si es nota única)
-            pointHoverRadius: 9,
-            pointBackgroundColor: 'white', // Centro blanco para estilo "anillo"
-            pointBorderWidth: 3,
-            borderWidth: 3,
-            spanGaps: true, // Conecta puntos aunque haya huecos intermedios
-            hidden: false
-        };
-    }).filter(ds => ds !== null); // Quitamos los ramos vacíos del array
-
-    // Si no hay ningún ramo con notas
-    if (datasets.length === 0) {
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.font = "bold 14px Inter, sans-serif";
-        ctx.fillStyle = "#9ca3af";
-        ctx.textAlign = "center";
-        ctx.fillText("Ingresa al menos una nota para ver tu progreso 📈", ctx.canvas.width/2, ctx.canvas.height/2);
-        return;
-    }
-
-    // 4. Dibujar el Gráfico
-    myChart = new Chart(ctx, {
-        type: 'line',
-        data: { labels, datasets },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleFont: { family: 'Inter', size: 13 },
-                    bodyFont: { family: 'Inter', size: 13, weight: 'bold' },
-                    padding: 10,
-                    callbacks: {
-                        label: function(context) {
-                            return ` ${context.dataset.label}: ${context.raw}`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                    y: {
-                        min: 0,
-                        max: 75, // Mantenemos el "aire" arriba
-                        
-                        ticks: { 
-                            stepSize: 10, 
-                            color: '#9ca3af',
-                            font: { family: 'Inter', weight: 'bold' },
-                            // EL FILTRO MÁGICO ⬇️
-                            callback: function(value) {
-                                // Si el número es mayor a 70, devolvemos 'null' (no muestra nada)
-                                if (value > 70) return null;
-                                return value;
-                            }
-                        },
-                        grid: { 
-                            // También ocultamos la línea horizontal superior para que quede limpio
-                            color: function(context) {
-                                if (context.tick.value > 70) return 'transparent';
-                                return 'rgba(156, 163, 175, 0.1)';
-                            }
-                        }
-                    },
-                    x: {
-                        ticks: { 
-                            color: '#9ca3af',
-                            font: { family: 'Inter' }
-                        },
-                        grid: { display: false }
-                    }
-                }
-        }
-    });
-
-    // 5. Crear Botones de Filtro (Chips)
-    datasets.forEach((dataset, index) => {
-        const btn = document.createElement('button');
-        const color = dataset.borderColor;
-        
-        // Estilos Tailwind manuales para el botón
-        btn.className = "px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all flex items-center gap-2 select-none shadow-sm";
-        
-        // Estilo inicial (Activo)
-        btn.style.borderColor = color;
-        btn.style.backgroundColor = `${color}15`; // 15 es transparencia hex (~10%)
-        btn.style.color = color;
-        
-        btn.innerHTML = `<span class="w-2.5 h-2.5 rounded-full shadow-sm" style="background-color: ${color}"></span> ${dataset.label}`;
-
-        // Lógica de click (Chart.js maneja el índice basado en el orden del array datasets)
-        btn.onclick = () => {
-            // Buscamos el dataset en el gráfico usando la etiqueta, porque el índice puede variar si filtramos vacíos
-            const targetDs = myChart.data.datasets.find(d => d.label === dataset.label);
-            if(!targetDs) return;
-
-            const isHidden = !targetDs.hidden;
-            targetDs.hidden = isHidden;
+        // --- BOTONES DE FILTRO CON RECORTE ---
+        datasets.forEach((dataset) => {
+            const btn = document.createElement('button');
+            const color = dataset.borderColor;
             
-            // Cambio visual del botón
-            if (isHidden) {
-                btn.style.opacity = "0.5";
-                btn.style.backgroundColor = "transparent";
-                btn.style.borderColor = "#e5e7eb"; 
-                btn.style.color = "#9ca3af";
-                btn.style.boxShadow = "none";
-            } else {
-                btn.style.opacity = "1";
-                btn.style.backgroundColor = `${color}15`;
-                btn.style.borderColor = color;
-                btn.style.color = color;
-                btn.style.boxShadow = "0 1px 2px rgba(0,0,0,0.05)";
+            // Recortamos el nombre solo para el botón (14 caracteres)
+            const shortName = truncateText(dataset.label, 14);
+
+            btn.className = "px-3 py-1 rounded-full text-[10px] font-bold border transition-all flex items-center gap-1.5 select-none shadow-sm whitespace-nowrap";
+            btn.style.borderColor = color;
+            btn.style.backgroundColor = `${color}15`;
+            btn.style.color = color;
+            btn.title = dataset.label; // ¡Truco! El nombre completo aparece al dejar el mouse
+            
+            btn.innerHTML = `<span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: ${color}"></span> ${shortName}`;
+            
+            btn.onclick = () => {
+                const targetDs = myChart.data.datasets.find(d => d.label === dataset.label);
+                if(!targetDs) return;
+                targetDs.hidden = !targetDs.hidden;
+                btn.style.opacity = targetDs.hidden ? "0.4" : "1";
+                btn.style.backgroundColor = targetDs.hidden ? "transparent" : `${color}15`;
+                myChart.update();
+            };
+            filterContainer.appendChild(btn);
+        });
+    } 
+    
+    // ==========================================
+    // 🕸️ MODO 2: RADAR (Nombres Cortos en las Puntas)
+    // ==========================================
+    else {
+        const labels = [];
+        const fullLabels = []; // Guardamos los nombres completos aparte
+        const dataValues = [];
+        const pointColors = [];
+
+        subjects.forEach(sub => {
+            const avg = calculateSubjectAvg(sub);
+            if (avg > 0) {
+                // AQUÍ CORTAMOS EL NOMBRE PARA EL RADAR (10 Caracteres)
+                labels.push(truncateText(sub.name, 10)); 
+                fullLabels.push(sub.name); // Guardamos el original para el tooltip
+                
+                const rounded = roundGrade(avg);
+                dataValues.push(rounded);
+                if (rounded < 40) pointColors.push('#ef4444'); 
+                else pointColors.push('#2563eb');
             }
-            
-            myChart.update();
-        };
+        });
 
-        filterContainer.appendChild(btn);
-    });
+        if (labels.length < 3) {
+            drawEmptyState(ctx, "Necesitas al menos 3 ramos con notas para el Radar 🕸️");
+            return;
+        }
+
+        myChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: labels, // Usamos los nombres cortos en los ejes
+                datasets: [{
+                    label: 'Promedio Actual',
+                    data: dataValues,
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                    borderColor: '#2563eb',
+                    borderWidth: 2,
+                    pointBackgroundColor: pointColors, 
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: pointColors,
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        min: 0, max: 70,
+                        angleLines: { color: localStorage.getItem('theme_dark') === 'true' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' },
+                        grid: { 
+                            color: ctx => (ctx.tick.value > 0 && ctx.tick.value < 40) ? 'rgba(239, 68, 68, 0.15)' : (localStorage.getItem('theme_dark') === 'true' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'),
+                            lineWidth: ctx => ctx.tick.value === 40 ? 2 : 1
+                        },
+                        pointLabels: {
+                            font: { size: 10, family: 'Inter', weight: 'bold' }, // Fuente un poco más chica
+                            color: localStorage.getItem('theme_dark') === 'true' ? '#e5e7eb' : '#4b5563'
+                        },
+                        ticks: { display: false, stepSize: 10 }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: { 
+                            // TRUCO DEL TOOLTIP: Recuperamos el nombre completo usando el índice
+                            title: function(context) {
+                                return fullLabels[context[0].dataIndex]; 
+                            },
+                            label: ctx => ` Promedio: ${(ctx.raw / 10).toFixed(1)}` 
+                        }
+                    }
+                }
+            }
+        });
+    }
 }
 
+function drawEmptyState(ctx, text) {
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.font = "bold 14px Inter, sans-serif";
+    ctx.fillStyle = localStorage.getItem('theme_dark') === 'true' ? "#9ca3af" : "#6b7280";
+    ctx.textAlign = "center";
+    ctx.fillText(text, ctx.canvas.width/2, ctx.canvas.height/2);
+}
 window.onload = loadData;
 
