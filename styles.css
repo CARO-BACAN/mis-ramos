@@ -870,11 +870,13 @@ html body #btn-theme-neon svg {
 }
 
 /* 2. EL BOTÓN DE GUARDAR (VISIBILIDAD MÁXIMA) */
+/* 2. EL BOTÓN DE GUARDAR (VISIBILIDAD MÁXIMA) */
 /* Buscamos el botón principal de acción dentro del modal */
 [data-theme="vaporwave"] div[id*="modal"] button.bg-primary-600,
 [data-theme="vaporwave"] #save-order-btn,
-[data-theme="vaporwave"] button[onclick*="save"],
-[data-theme="vaporwave"] button[onclick*="close"] {
+[data-theme="vaporwave"] button[onclick*="save"] { 
+    /* BORRÉ LA LÍNEA DE button[onclick*="close"] PARA QUE NO AFECTE A LA "X" */
+
     background: linear-gradient(135deg, #01cdfe 0%, #b967ff 100%) !important;
     color: #ffffff !important;
     font-weight: 900 !important;

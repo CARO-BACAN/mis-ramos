@@ -1,6 +1,7 @@
 {
   "name": "Mis Ramos",
   "short_name": "Mis Ramos",
+  "version": "4.0",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",

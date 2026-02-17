@@ -22,6 +22,10 @@ const SECRET_THEMES = {
         const SCROLL_THRESHOLD = 100; // Píxeles para esconder el botón
         let subjects = [];
         let manualGrades = [];
+        const CHART_COLORS = [
+    '#2563eb', '#db2777', '#16a34a', '#d97706', 
+    '#7c3aed', '#0891b2', '#4f46e5', '#ca8a04'
+];
         // --- NUEVO CONTADOR GACHA ---
         let gachaAttempts = parseInt(localStorage.getItem('gacha_attempts')) || 0;
         let scaleMode = 'score'; // 'score' or 'percent'
@@ -1219,8 +1223,6 @@ function closeScaleModal() {
     }
 }
 
-// --- LÓGICA DE NAVEGACIÓN V3 (Atrás y Escape) ---
-
 // 1. Detectar el botón "Atrás" del celular
 window.onpopstate = function(event) {
     const manageModal = document.getElementById('manage-modal');
@@ -1236,7 +1238,8 @@ window.onpopstate = function(event) {
     }
 
     // 2. Si no hay cambios o no es el modal de gestión, cerramos todo normal
-    const modales = ['theme-modal', 'info-modal', 'exam-modal', 'scale-modal', 'manage-modal', 'contact-modal', 'story-modal'];
+    const modales = ['theme-modal', 'info-modal', 'exam-modal', 'scale-modal', 'manage-modal', 'contact-modal', 'story-modal', 
+        'chart-modal', 'semester-modal'];
     modales.forEach(id => {
         const m = document.getElementById(id);
         if (m) m.classList.add('hidden');
@@ -1258,7 +1261,8 @@ document.addEventListener('keydown', (e) => {
         }
 
         // Cierre normal para el resto de los modales
-        const modales = ['theme-modal', 'info-modal', 'exam-modal', 'scale-modal', 'contact-modal'];
+        const modales = ['theme-modal', 'info-modal', 'exam-modal', 'scale-modal', 'manage-modal', 'contact-modal', 'story-modal', 
+        'chart-modal', 'semester-modal'];
         modales.forEach(id => {
             const m = document.getElementById(id);
             if (m && !m.classList.contains('hidden')) {
@@ -2178,6 +2182,196 @@ function editSemesterName(id) {
         saveData(); // Guardamos en memoria
         renderSemesterList(); // Actualizamos la lista visual
     }
+}
+
+let myChart = null; // Variable global para destruir/crear el gráfico
+
+function openChartModal() {
+    document.getElementById('chart-modal').classList.remove('hidden');
+    initProgressionChart(); // Esta función la crearemos en el siguiente paso
+    history.pushState({ modalOpen: 'chart-modal' }, "");
+}
+
+function closeChartModal() {
+    document.getElementById('chart-modal').classList.add('hidden');
+    if (myChart) {
+        myChart.destroy(); // Limpiamos el gráfico al cerrar para ahorrar memoria
+        myChart = null;
+    }
+    if (history.state && history.state.modalOpen === 'chart-modal') {
+        history.back();
+    }
+}
+function initProgressionChart() {
+    const canvas = document.getElementById('progressionChart');
+    if (!canvas) return; // Seguridad extra
+    const ctx = canvas.getContext('2d');
+    const filterContainer = document.getElementById('chart-filters');
+    
+    // Limpieza total antes de dibujar
+    filterContainer.innerHTML = ''; 
+    if (myChart) {
+        myChart.destroy();
+        myChart = null;
+    }
+
+    // --- DEBUG: Ver qué datos está leyendo el código ---
+    console.log("Generando gráfico con estos ramos:", subjects);
+
+    // 1. Encontrar el ramo con más notas para definir el ancho
+    // Usamos un mínimo de 4 evaluaciones para que el gráfico no se vea aplastado
+    let maxGrades = 4; 
+    subjects.forEach(s => {
+        if (s.grades.length > maxGrades) maxGrades = s.grades.length;
+    });
+
+    // 2. Etiquetas del Eje X
+    const labels = Array.from({length: maxGrades}, (_, i) => `Eva ${i + 1}`);
+
+    // 3. Preparar los Datos
+    const datasets = subjects.map((subject, index) => {
+        // Convertimos las notas a números reales
+        const dataPoints = subject.grades.map(g => {
+            // Limpiamos el valor (cambiar comas por puntos)
+            const cleanVal = g.value ? g.value.toString().replace(',', '.') : '';
+            if (cleanVal === "") return null; // Si está vacío, es null
+            return parseFloat(cleanVal);
+        });
+
+        // Verificamos si tiene datos para mostrar
+        const hasData = dataPoints.some(val => val !== null);
+        if (!hasData) return null; // Si el ramo no tiene notas, no creamos línea para él
+
+        return {
+            label: subject.name || `Ramo ${index + 1}`,
+            data: dataPoints,
+            borderColor: CHART_COLORS[index % CHART_COLORS.length],
+            backgroundColor: CHART_COLORS[index % CHART_COLORS.length], // Color del punto
+            tension: 0.3, 
+            pointRadius: 6, // <--- PUNTOS MÁS GRANDES (Para verlos si es nota única)
+            pointHoverRadius: 9,
+            pointBackgroundColor: 'white', // Centro blanco para estilo "anillo"
+            pointBorderWidth: 3,
+            borderWidth: 3,
+            spanGaps: true, // Conecta puntos aunque haya huecos intermedios
+            hidden: false
+        };
+    }).filter(ds => ds !== null); // Quitamos los ramos vacíos del array
+
+    // Si no hay ningún ramo con notas
+    if (datasets.length === 0) {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.font = "bold 14px Inter, sans-serif";
+        ctx.fillStyle = "#9ca3af";
+        ctx.textAlign = "center";
+        ctx.fillText("Ingresa al menos una nota para ver tu progreso 📈", ctx.canvas.width/2, ctx.canvas.height/2);
+        return;
+    }
+
+    // 4. Dibujar el Gráfico
+    myChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: { family: 'Inter', size: 13 },
+                    bodyFont: { family: 'Inter', size: 13, weight: 'bold' },
+                    padding: 10,
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.dataset.label}: ${context.raw}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                    y: {
+                        min: 0,
+                        max: 75, // Mantenemos el "aire" arriba
+                        
+                        ticks: { 
+                            stepSize: 10, 
+                            color: '#9ca3af',
+                            font: { family: 'Inter', weight: 'bold' },
+                            // EL FILTRO MÁGICO ⬇️
+                            callback: function(value) {
+                                // Si el número es mayor a 70, devolvemos 'null' (no muestra nada)
+                                if (value > 70) return null;
+                                return value;
+                            }
+                        },
+                        grid: { 
+                            // También ocultamos la línea horizontal superior para que quede limpio
+                            color: function(context) {
+                                if (context.tick.value > 70) return 'transparent';
+                                return 'rgba(156, 163, 175, 0.1)';
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: { 
+                            color: '#9ca3af',
+                            font: { family: 'Inter' }
+                        },
+                        grid: { display: false }
+                    }
+                }
+        }
+    });
+
+    // 5. Crear Botones de Filtro (Chips)
+    datasets.forEach((dataset, index) => {
+        const btn = document.createElement('button');
+        const color = dataset.borderColor;
+        
+        // Estilos Tailwind manuales para el botón
+        btn.className = "px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all flex items-center gap-2 select-none shadow-sm";
+        
+        // Estilo inicial (Activo)
+        btn.style.borderColor = color;
+        btn.style.backgroundColor = `${color}15`; // 15 es transparencia hex (~10%)
+        btn.style.color = color;
+        
+        btn.innerHTML = `<span class="w-2.5 h-2.5 rounded-full shadow-sm" style="background-color: ${color}"></span> ${dataset.label}`;
+
+        // Lógica de click (Chart.js maneja el índice basado en el orden del array datasets)
+        btn.onclick = () => {
+            // Buscamos el dataset en el gráfico usando la etiqueta, porque el índice puede variar si filtramos vacíos
+            const targetDs = myChart.data.datasets.find(d => d.label === dataset.label);
+            if(!targetDs) return;
+
+            const isHidden = !targetDs.hidden;
+            targetDs.hidden = isHidden;
+            
+            // Cambio visual del botón
+            if (isHidden) {
+                btn.style.opacity = "0.5";
+                btn.style.backgroundColor = "transparent";
+                btn.style.borderColor = "#e5e7eb"; 
+                btn.style.color = "#9ca3af";
+                btn.style.boxShadow = "none";
+            } else {
+                btn.style.opacity = "1";
+                btn.style.backgroundColor = `${color}15`;
+                btn.style.borderColor = color;
+                btn.style.color = color;
+                btn.style.boxShadow = "0 1px 2px rgba(0,0,0,0.05)";
+            }
+            
+            myChart.update();
+        };
+
+        filterContainer.appendChild(btn);
+    });
 }
 
 window.onload = loadData;
