@@ -328,7 +328,7 @@ function createDefaultSemester() {
 }
 
         function addSubject() {
-            if (subjects.length >= 8) return alert("Has alcanzado el máximo de 8 ramos.");
+            if (subjects.length >= 20) return alert("Has alcanzado el máximo de 20 ramos, no sigas sufriendo.");
             subjects.push({ 
                 id: Date.now(), 
                 name: `Ramo ${subjects.length + 1}`, 
@@ -377,22 +377,46 @@ function createDefaultSemester() {
                     </button>
 
                     <div id="magic-menu-${sIndex}" class="hidden absolute left-0 top-10 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-left">
-                        <div class="p-2 space-y-1">
-                            <button onclick="simulateNeeded(${sIndex})" class="w-full text-left px-3 py-2 text-xs font-medium text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-2">
-                                <span class="text-lg">🛟</span>
-                                <div><span class="block">Salvar el Ramo</span><span class="text-[10px] text-gray-400 font-normal">¿Qué nota necesito?</span></div>
-                            </button>
-                            <button onclick="simulateWorstCase(${sIndex})" class="w-full text-left px-3 py-2 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex items-center gap-2">
-                                <span class="text-lg">☠️</span>
-                                <div><span class="block">Peor Escenario</span><span class="text-[10px] text-red-400/70 font-normal">Rellenar con 1.0</span></div>
-                            </button>
-                            <div class="h-px bg-gray-100 dark:bg-gray-700 my-1"></div>
-                            <button onclick="clearGhosts(${sIndex})" class="w-full text-left px-3 py-2 text-xs font-medium text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                                Limpiar Simulación
-                            </button>
-                        </div>
-                    </div>
+    <div class="p-2 space-y-2">
+        <!-- Sección 1: Metas -->
+        <div>
+            <span class="block px-2 mb-1 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">¿A qué nota apuntas?</span>
+            <div class="grid grid-cols-3 gap-1">
+                <button onclick="simulateTarget(${sIndex}, 40)" class="flex flex-col items-center justify-center py-2 px-1 rounded-lg bg-primary-50 text-primary-600 hover:bg-primary-100 dark:bg-primary-900/30 dark:text-primary-400 dark:hover:bg-primary-900/50 transition-colors">
+                    <span class="text-sm font-black">4.0</span>
+                    <span class="text-[9px] font-medium opacity-80">Salvar</span>
+                </button>
+                <button onclick="simulateTarget(${sIndex}, 50)" class="flex flex-col items-center justify-center py-2 px-1 rounded-lg bg-primary-50 text-primary-600 hover:bg-primary-100 dark:bg-primary-900/30 dark:text-primary-400 dark:hover:bg-primary-900/50 transition-colors">
+                    <span class="text-sm font-black">5.0</span>
+                    <span class="text-[9px] font-medium opacity-80">Seguro</span>
+                </button>
+                <button onclick="simulateTarget(${sIndex}, 60)" class="flex flex-col items-center justify-center py-2 px-1 rounded-lg bg-primary-50 text-primary-600 hover:bg-primary-100 dark:bg-primary-900/30 dark:text-primary-400 dark:hover:bg-primary-900/50 transition-colors">
+                    <span class="text-sm font-black">6.0</span>
+                    <span class="text-[9px] font-medium opacity-80">Joya</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="h-px bg-gray-100 dark:bg-gray-700 my-1"></div>
+
+        <!-- Sección 2: Otras acciones -->
+        <button onclick="simulateWorstCase(${sIndex})" class="w-full text-left px-3 py-2 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+                <circle cx="9" cy="12" r="1"/>
+                <circle cx="15" cy="12" r="1"/>
+                <path d="M8 20v2h8v-2"/>
+                <path d="m12.5 17-.5-1-.5 1h1z"/>
+                <path d="M16 20a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20"/>
+            </svg>
+            <div><span class="block">Peor Escenario</span><span class="text-[10px] text-red-400/70 font-normal">Rellenar con 1.0</span></div>
+        </button>
+        
+        <button onclick="clearGhosts(${sIndex})" class="w-full text-left px-3 py-2 text-xs font-medium text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            Limpiar Simulación
+        </button>
+    </div>
+</div>
                 </div>
 
                 <div class="flex-1 min-w-0">
@@ -1561,59 +1585,41 @@ function simulateWorstCase(sIndex) {
 }
 
 // 3. SALVAR EL RAMO (Ahora rellena TODOS los huecos y usa escala 10-70) 🛟
-function simulateNeeded(sIndex) {
+function simulateTarget(sIndex, targetAvg) {
     clearGhosts(sIndex); 
 
     const subject = subjects[sIndex];
-    
-    // 1. Calcular puntos actuales (Escala 10-70)
     let currentPoints = 0; 
     let currentTotalWeight = 0; 
     
     subject.grades.forEach(g => {
-        // Usamos lógica robusta: si hay valor, lo usamos. Si no, 0.
         const w = parseFloat(g.weight);
         const v = parseFloat(g.value);
-        
         if (!isNaN(w)) {
-            if (!isNaN(v)) {
-                // Ya tiene nota
-                currentPoints += v * (w / 100);
-            }
+            if (!isNaN(v)) currentPoints += v * (w / 100);
             currentTotalWeight += w;
         }
     });
 
-    const targetAvg = 40; // CORREGIDO: Meta es 40, no 4.0
     let remainingWeight = 100 - currentTotalWeight;
     let weightAvailableToFill = 0;
 
-    // Detectar dónde podemos escribir (huecos vacíos o huecos nuevos)
-    // Escenario 1: Huecos que ya tienen % pero no nota
     subject.grades.forEach(g => {
         if (g.weight && !g.value) weightAvailableToFill += parseFloat(g.weight);
     });
 
-    // Escenario 2: Si falta peso para el 100%, ese peso también está disponible
-    if (remainingWeight > 0) {
-        weightAvailableToFill += remainingWeight;
-    }
+    if (remainingWeight > 0) weightAvailableToFill += remainingWeight;
 
     if (weightAvailableToFill <= 0) {
         alert("¡Ya tienes el 100% evaluado con notas! No puedo simular nada.");
         return;
     }
 
-    // FÓRMULA MAESTRA:
-    // (Meta - PuntosQueLlevo) / (PesoDisponible / 100)
-    // Ejemplo: (40 - 35) / 0.5 = 10 (Necesito promedio 10 en lo que falta)
+    // Usamos el targetAvg que viene del botón (40, 50 o 60)
     let needed = (targetAvg - currentPoints) / (weightAvailableToFill / 100);
+    needed = Math.ceil(needed); 
+    if (needed < 10) needed = 10; 
 
-    // Ajustes finales
-    needed = Math.ceil(needed); // Redondear hacia arriba (mejor que sobre a que falte)
-    if (needed < 10) needed = 10; // Nota mínima es 10, no 1.0
-
-    // Llamamos a la función que escribe EN TODOS LOS HUECOS
     applyNeededGrade(sIndex, needed, remainingWeight);
 }
 
@@ -1725,7 +1731,7 @@ function loadUnlockedThemes() {
         const title = document.createElement('span');
         title.id = 'special-themes-title';
         title.className = "text-[10px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-wider";
-        title.innerText = "✨ Desbloqueado en Gacha";
+        title.innerText = "Desbloqueado en Gacha";
         
         const counter = document.createElement('span');
         counter.id = 'special-themes-counter';
@@ -2411,6 +2417,7 @@ function initProgressionChart() {
     }
 }
 
+
 function drawEmptyState(ctx, text) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.font = "bold 14px Inter, sans-serif";
@@ -2419,4 +2426,5 @@ function drawEmptyState(ctx, text) {
     ctx.fillText(text, ctx.canvas.width/2, ctx.canvas.height/2);
 }
 window.onload = loadData;
+
 
