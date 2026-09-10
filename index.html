@@ -920,7 +920,7 @@ por Carolina Balboa.
     // Este código revisa si el navegador soporta Service Workers (hoy en día todos lo hacen)
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
+            navigator.serviceWorker.register('sw.js')
                 .then(registration => {
                     console.log('Modo sin internet activado con éxito.');
                 })
