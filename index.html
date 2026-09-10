@@ -916,5 +916,19 @@ por Carolina Balboa.
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="script.js" defer></script>
+<script>
+    // Este código revisa si el navegador soporta Service Workers (hoy en día todos lo hacen)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => {
+                    console.log('Modo sin internet activado con éxito.');
+                })
+                .catch(error => {
+                    console.log('Hubo un error al activar el modo sin internet:', error);
+                });
+        });
+    }
+</script>
 </body>
 </html>
